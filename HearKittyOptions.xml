@@ -1,0 +1,163 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
+
+	<!--
+		Hear Kitty by Vger-Azjol-Nerub
+		See Readme.htm for more information.
+		www.vgermods.com
+	-->
+
+	<!-- Standard Hear Kitty large frame tab template -->
+	<Frame name="KittyUITabPageTemplate" virtual="true" hidden="true">
+		<Anchors><Anchor point="TOPLEFT" /><Anchor point="BOTTOMRIGHT" /></Anchors>
+	</Frame>
+	
+	<!-- Standard Hear Kitty button with a tooltip template -->
+	<Button name="KittyUIButtonTemplate" inherits="UIPanelButtonTemplate" virtual="true">
+		<Scripts>
+			<OnEnter function="KittyUI_TooltipOn" />
+			<OnLeave function="KittyUI_TooltipOff" />
+		</Scripts>
+	</Button>
+
+	<!-- Standard Hear Kitty options checkbox template -->
+	<CheckButton name="KittyUICheckboxTemplate" inherits="UICheckButtonTemplate" virtual="true">
+		<Size><AbsDimension x="25" y="25" /></Size>
+		<HitRectInsets><AbsInset left="0" right="-310" top="0" bottom="0"/></HitRectInsets>
+		<Scripts>
+			<OnEnter function="KittyUI_TooltipOn" />
+			<OnLeave function="KittyUI_TooltipOff" />
+		</Scripts>
+	</CheckButton>
+
+	<!-- Label for standard Hear Kitty options checkbox -->
+	<FontString name="KittyUICheckboxLabelTemplate" inherits="GameFontHighlight" virtual="true" justifyH="LEFT" justifyV="MIDDLE">
+		<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="25" y="0" /></Offset></Anchor></Anchors>
+		<Size><AbsDimension x="310" y="25" /></Size>
+	</FontString>
+
+	<!-- Standard Hear Kitty options radio button template -->
+	<CheckButton name="KittyUIRadioButtonTemplate" inherits="UIRadioButtonTemplate" virtual="true">
+		<Size><AbsDimension x="15" y="15" /></Size>
+		<HitRectInsets><AbsInset left="0" right="-310" top="0" bottom="0"/></HitRectInsets>
+		<Scripts>
+			<OnEnter function="KittyUI_TooltipOn" />
+			<OnLeave function="KittyUI_TooltipOff" />
+		</Scripts>
+	</CheckButton>
+
+	<!-- Label for standard Hear Kitty options radio button-->
+	<FontString name="KittyUIRadioButtonLabelTemplate" inherits="GameFontHighlightSmall" virtual="true" justifyH="LEFT" justifyV="MIDDLE">
+		<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="25" y="0" /></Offset></Anchor></Anchors>
+		<Size><AbsDimension x="310" y="15" /></Size>
+	</FontString>
+
+	<!-- The Hear Kitty options page in Interface Options -->
+	<Frame name="KittyUIFrame" inherits="KittyUITabPageTemplate">
+		<Size><AbsDimension x="385" y="409" /></Size>
+
+		<!-- Art layer -->
+		<Layers>
+			<Layer level="ARTWORK">
+
+				<Texture file="Interface\AddOns\HearKitty\Textures\HearKittyLogo">
+					<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="10" y="-10" /></Offset></Anchor></Anchors>
+					<Size><AbsDimension x="128" y="64" /></Size>
+				</Texture>
+				
+				<FontString name="KittyUIFrame_AboutHeaderLabel" inherits="GameFontNormal" justifyH="LEFT" text="KittyUIFrame_AboutHeaderLabel_Text">
+					<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="150" y="-10" /></Offset></Anchor></Anchors>
+					<Size><AbsDimension x="225" y="20" /></Size>
+				</FontString>
+				<FontString name="KittyUIFrame_AboutVersionLabel" inherits="GameFontNormal" justifyH="LEFT">
+					<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="150" y="-30" /></Offset></Anchor></Anchors>
+					<Size><AbsDimension x="225" y="20" /></Size>
+					<Color r="0.7" g="0.7" b="0.7" a="1.0" />
+				</FontString>
+				<FontString name="KittyUIFrame_AboutTranslationLabel" inherits="GameFontNormal" justifyH="LEFT" text="KittyUIFrame_AboutTranslationLabel_Text">
+					<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="150" y="-50" /></Offset></Anchor></Anchors>
+					<Size><AbsDimension x="225" y="20" /></Size>
+					<Color r="0.7" g="0.7" b="0.7" a="1.0" />
+				</FontString>
+
+				<FontString name="KittyUIFrame_OptionsHeaderLabel" inherits="GameFontNormalLarge" justifyH="LEFT" text="KittyUIFrame_OptionsHeaderLabel_Text">
+					<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="15" y="-85" /></Offset></Anchor></Anchors>
+					<Size><AbsDimension x="355" y="20" /></Size>
+				</FontString>
+				<FontString name="KittyUIFrame_OptionsSubHeaderLabel" inherits="GameFontHighlightSmall" justifyH="LEFT" text="KittyUIFrame_OptionsSubHeaderLabel_Text">
+					<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="15" y="-105" /></Offset></Anchor></Anchors>
+					<Size><AbsDimension x="355" y="20" /></Size>
+				</FontString>
+				
+				<FontString name="KittyUIFrame_DisabledWarningLabel" inherits="GameFontNormalSmall" justifyH="LEFT" hidden="true" text="KittyUIFrame_DisabledWarningLabel_Text">
+					<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="50" y="-175" /></Offset></Anchor></Anchors>
+					<Size><AbsDimension x="320" y="25" /></Size>
+				</FontString>
+				
+				<FontString name="KittyUIFrame_SoundPackDropDown_Label" inherits="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" text="KittyUIFrame_SoundPackDropDown_Label_Text"><!-- Sound pack: -->
+					<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="50" y="-215"/></Offset></Anchor></Anchors>
+					<Size><AbsDimension x="80" y="25" /></Size>
+				</FontString>
+
+				<FontString name="KittyUIFrame_SoundPackCreditsLabel" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="MIDDLE" text=""><!-- by Vger-Azjol-Nerub -->
+					<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="160" y="-245"/></Offset></Anchor></Anchors>
+					<Size><AbsDimension x="160" y="20" /></Size>
+					<Color r="0.7" g="0.7" b="0.7" a="1.0" />
+				</FontString>
+
+			</Layer>
+		</Layers>
+
+		<!-- Controls -->
+		<Frames>
+			
+			<CheckButton name="KittyUIFrame_EnableSoundsCheck" inherits="KittyUICheckboxTemplate">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="25" y="-150" /></Offset></Anchor></Anchors>
+				<Layers><Layer level="ARTWORK">
+					<FontString name="$parent_Label" inherits="KittyUICheckboxLabelTemplate" text="KittyUIFrame_EnableSoundsCheck_Text" />
+				</Layer></Layers>
+				<Scripts><OnClick function="KittyUIFrame_EnableSoundsCheck_OnClick" /></Scripts>
+			</CheckButton>
+
+			<Button name="KittyUIFrame_SoundPackDropDown" hidden="false" inherits="UIDropDownMenuTemplate" text="KittyUIFrame_SoundPackDropDown_Text">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="130" y="-215"/></Offset></Anchor></Anchors>
+				<Scripts>
+					<OnEnter function="KittyUI_TooltipOn" />
+					<OnLeave function="KittyUI_TooltipOff" />
+				</Scripts>
+			</Button>
+
+			<CheckButton name="KittyUIFrame_UseEffectsChannelCheck" inherits="KittyUICheckboxTemplate">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="25" y="-275" /></Offset></Anchor></Anchors>
+				<Layers><Layer level="ARTWORK">
+					<FontString name="$parent_Label" inherits="KittyUICheckboxLabelTemplate" text="KittyUIFrame_UseEffectsChannelCheck_Text" />
+				</Layer></Layers>
+				<Scripts><OnClick function="KittyUIFrame_UseEffectsChannelCheck_OnClick" /></Scripts>
+			</CheckButton>
+
+			<CheckButton name="KittyUIFrame_OnlyPlay5Check" inherits="KittyUICheckboxTemplate">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="25" y="-305" /></Offset></Anchor></Anchors>
+				<Layers><Layer level="ARTWORK">
+					<FontString name="$parent_Label" inherits="KittyUICheckboxLabelTemplate" text="KittyUIFrame_OnlyPlay5Check_Text" />
+				</Layer></Layers>
+				<Scripts><OnClick function="KittyUIFrame_OnlyPlay5Check_OnClick" /></Scripts>
+			</CheckButton>
+
+			<CheckButton name="KittyUIFrame_DoubleCritsCheck" inherits="KittyUICheckboxTemplate">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="25" y="-335" /></Offset></Anchor></Anchors>
+				<Layers><Layer level="ARTWORK">
+					<FontString name="$parent_Label" inherits="KittyUICheckboxLabelTemplate" text="KittyUIFrame_DoubleCritsCheck_Text" />
+				</Layer></Layers>
+				<Scripts><OnClick function="KittyUIFrame_DoubleCritsCheck_OnClick" /></Scripts>
+			</CheckButton>
+
+		</Frames>
+		
+		<Scripts>
+			<OnLoad function="KittyUI_OnLoad" />
+			<OnShow function="KittyUI_OnShow" />
+			<OnHide function="KittyUI_OnHide" />
+		</Scripts>
+		
+	</Frame>
+	
+</Ui>
