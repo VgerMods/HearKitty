@@ -6,7 +6,7 @@
 -- Main non-UI code
 ------------------------------------------------------------
 
-HearKittyVersion = 1.0901
+HearKittyVersion = 1.0902
 
 -- Hear Kitty requires this version of VgerCore:
 local KittyVgerCoreVersionRequired = 1.09
@@ -154,6 +154,16 @@ function KittyOnBuffsChange()
 			end
 		end
 	end
+
+	-- Enhancement shamans' Maelstrom Weapon
+	if Class == "SHAMAN" and Spec == 2 then
+		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 344179)
+		if BuffCharges then
+			KittyThisResourceDecays = false
+			KittyCurrentMaxStacks = 5
+			-- In 9.0.2, Maelstrom Weapon works similarly to Anticipation combo points: it stacks up to 10, but you only spend up to 5.
+		end
+	end
 	
 	-- If we didn't find any buffs, it's possible that we've already had a buff before and it's worn off.
 	if BuffCharges == nil then BuffCharges = 0 end
@@ -222,15 +232,12 @@ function KittyOnMaelstromChange()
 		elseif Maelstrom >= 40 then
 			Maelstrom = 3
 		elseif Maelstrom >= 30 then
-			Maelstrom = 3
+			Maelstrom = 2
 		elseif Maelstrom >= 20 then
 			Maelstrom = 1
 		else
 			Maelstrom = 0
 		end
-	else
-		-- Enhancement
-		Maelstrom = floor(5 * Maelstrom / UnitPowerMax("player", Enum.PowerType.Maelstrom))
 	end
 
 	if (Maelstrom ~= KittyLastSoundPlayed) then
