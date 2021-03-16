@@ -84,6 +84,8 @@ function KittyOnEvent(self, Event, arg1, arg2)
 		KittyOnSoulShardsChange()
 	elseif Event == "UNIT_POWER_UPDATE" and arg1 == "player" and arg2 == "INSANITY" then
 		KittyOnInsanityChange()
+	elseif Event == "UNIT_POWER_UPDATE" and arg1 == "player" and arg2 == "LUNAR_POWER" then
+		KittyOnAstralPowerChange()
 	elseif Event == "UNIT_POWER_UPDATE" and arg1 == "player" and arg2 == "ARCANE_CHARGES" then
 		KittyOnArcaneChargesChange()
 	elseif Event == "UNIT_POWER_UPDATE" and (arg1 == "player" or arg1 == "vehicle") and arg2 == "COMBO_POINTS" then
@@ -275,6 +277,57 @@ function KittyOnInsanityChange()
 	end
 end
 
+function KittyOnAstralPowerChange()
+	local AstralPower = UnitPower("player", Enum.PowerType.AstralPower)
+
+	-- Get relevant talent, current Eclipse states
+	local _, _, _, SoulOfTheForestSelected = GetTalentInfo(5, 1, 1)
+	local LunarActive, SolarActive = false, false
+	for i = 1, 40 do
+		local _, _, _, _, _, _, _, _, _, spellId = UnitAura("player", i)
+		if spellId == 48518 then
+			LunarActive = true
+		end
+		if spellId == 48517 then
+			SolarActive = true
+		end
+	end
+
+	-- Set APGainOffset based on talents and auras, from highest to lowest possible. Considered getting this based on active cast, but didn't want the value jumping around.
+	local APGainOffset
+	if (SolarActive == true and SoulOfTheForestSelected == true) then
+		APGainOffset = 9
+	elseif LunarActive == true then
+		APGainOffset = 8
+	elseif (SolarActive == true and SoulOfTheForestSelected == false) then
+		APGainOffset = 6
+	else
+		APGainOffset = 0 -- We shouldn't see this, but if we can't work out the offset, just use the whole value
+	end
+
+	-- Play a tone before hitting each multiple of 30AP (Starsurge), and when our next cast will cap us
+	if AstralPower >= 100 - APGainOffset then
+		AstralPower = 5
+	elseif AstralPower >= 90 - APGainOffset then
+		AstralPower = 4
+	elseif AstralPower >= 60 - APGainOffset then
+		AstralPower = 3
+	--[[ elseif AstralPower >= 50 - APGainOffset then
+		AstralPower = 2 ]]-- Uncomment for a tone when Starfall (50AP) is up.
+	elseif AstralPower >= 30 - APGainOffset then
+		AstralPower = 1
+	else
+		AstralPower = 0
+	end
+
+	if (AstralPower ~= KittyLastSoundPlayed) then
+		-- (No-op if the number actually hasn't changed.)
+		KittyCurrentMaxStacks = 5
+		KittyThisResourceDecays = true
+		KittyComboSound(AstralPower)
+	end
+end
+
 function KittyOnComboPointsChange(Unit)
 	local ComboPoints
 	if Unit == "vehicle" then
@@ -423,7 +476,7 @@ function KittyComboSound(ComboPoints)
 		if KittyDebug then VgerCore.Message("*** Bailing out because we just played sound #" .. ComboPoints) end
 		return
 	end
-	
+
 	-- Ignore the very first buff event that happens within 30 seconds, so we don't play a bunch of sounds right when logging in if you happen to have a bunch of Lightning
 	-- Shield stacks saved up, for example.
 	if KittyIsFirstBuffChange then
