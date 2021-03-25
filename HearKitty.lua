@@ -147,7 +147,7 @@ function KittyOnBuffsChange()
 
 	-- Frost mages' Icicles, only with Glacial Spike talent
 	if Class == "MAGE" and Spec == 3 then
-		_, _, _, HasGlacialSpike = GetTalentInfo(7, 3, 1) -- Row 7, Column 3, Primary (1) spec
+		local _, _, _, HasGlacialSpike = GetTalentInfo(7, 3, 1) -- Row 7, Column 3, Primary (1) spec
 		if HasGlacialSpike then
 			BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 205473)
 			if BuffCharges then
@@ -268,7 +268,7 @@ function KittyOnInsanityChange()
 	else
 		Insanity = 0
 	end 
-	-- Insanity = floor(5 * Insanity / UnitPowerMax("player", Enum.PowerType.Insanity))
+
 	if (Insanity ~= KittyLastSoundPlayed) then
 		-- (No-op if the number actually hasn't changed.)
 		KittyCurrentMaxStacks = 5
@@ -280,18 +280,10 @@ end
 function KittyOnAstralPowerChange()
 	local AstralPower = UnitPower("player", Enum.PowerType.AstralPower)
 
-	-- Get relevant talent, current Eclipse states
+	-- Get the relevant talent and Eclipse states.
 	local _, _, _, SoulOfTheForestSelected = GetTalentInfo(5, 1, 1)
-	local LunarActive, SolarActive = false, false
-	for i = 1, 40 do
-		local _, _, _, _, _, _, _, _, _, spellId = UnitAura("player", i)
-		if spellId == 48518 then
-			LunarActive = true
-		end
-		if spellId == 48517 then
-			SolarActive = true
-		end
-	end
+	local SolarActive = KittyAuraStacks("player", "PLAYER HELPFUL", 48517) ~= nil
+	local LunarActive = KittyAuraStacks("player", "PLAYER HELPFUL", 48518) ~= nil
 
 	-- Set APGainOffset based on talents and auras, from highest to lowest possible. Considered getting this based on active cast, but didn't want the value jumping around.
 	local APGainOffset
