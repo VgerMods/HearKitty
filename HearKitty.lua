@@ -1,6 +1,6 @@
 ﻿-- Hear Kitty  by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2021 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2021 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
 -- 
 -- Main non-UI code
@@ -707,8 +707,8 @@ KittyCoreFrame:SetScript("OnEvent", KittyOnEvent)
 KittyCoreFrame:RegisterEvent("VARIABLES_LOADED")
 KittyCoreFrame:RegisterEvent("UNIT_AURA")
 KittyCoreFrame:RegisterEvent("UNIT_POWER_UPDATE")
-if not VgerCore.IsClassic then
-	-- Event isn't present on Classic
+if VgerCore.SpecsExist then
+	-- Event isn't present on Classic or Burning Crusade Classic
 	KittyCoreFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 end
 
