@@ -2,8 +2,8 @@
 -- www.vgermods.com
 -- © 2006-2021 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- 
--- Version 1.0.13 -- IsBurningCrusade, SpecsExist, etc.
-local VgerCoreThisVersion = 1.13
+-- Version 1.0.14 -- IndexOf
+local VgerCoreThisVersion = 1.14
 -- 
 -- VgerCore contains functionality that is shared by Vger's mods.
 -- It can be used as a standalone add-on, or embedded within other mods.
@@ -20,7 +20,7 @@ VgerCore.Version = VgerCoreThisVersion
 
 -- What version is this?
 VgerCore.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
-VgerCore.IsBurningCrusade = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
+VgerCore.IsBurningCrusade = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC) -- includes pre-patch
 VgerCore.IsShadowlands = (select(4, GetBuildInfo()) >= 90000)
 
 VgerCore.DeathKnightsExist = VgerCore.IsShadowlands
@@ -360,6 +360,18 @@ end
 -- prevents execution more than once in the same duration.
 function VgerCore.Delay(Duration, Func, arg1)
 	return VgerCore.ThrottleDelayCore(Duration, false, Func, arg1)
+end
+
+-- Returns the index of an item in a table, or nil if it's not in the table.
+-- (Keep in mind that this requires iteration!)
+function VgerCore.IndexOf(Table, Item)
+	if not Item then
+		VgerCore.Fail("Can't find the index of nothing.")
+	end
+	local ThisIndex, ThisItem
+	for ThisIndex, ThisItem in pairs(Table) do
+		if ThisItem == Item then return ThisIndex end
+	end
 end
 
 ------------------------------------------------------------
