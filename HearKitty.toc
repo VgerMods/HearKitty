@@ -4,6 +4,8 @@
 ## Notes: Hear Kitty plays sounds when you gain and spend combo points.
 ## SavedVariablesPerCharacter: KittyOptions
 
+## X-Wago-ID: vEGPeON1
+
 VgerCore\VgerCore.lua
 
 Localization.lua
