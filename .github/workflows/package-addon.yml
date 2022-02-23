@@ -8,8 +8,8 @@ on:
         required: true
 
 env:
-  CLASSIC_VERSION: 11307
-  BURNING_CRUSADE_VERSION: 20502
+  CLASSIC_VERSION: 11400
+  BURNING_CRUSADE_VERSION: 20503
 
 jobs:
   package:
