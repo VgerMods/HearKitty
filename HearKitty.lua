@@ -9,7 +9,7 @@
 HearKittyVersion = 1.0905
 
 -- Hear Kitty requires this version of VgerCore:
-local KittyVgerCoreVersionRequired = 1.09
+local KittyVgerCoreVersionRequired = 1.17
 
 -- Timer
 local KittyLoadTime = GetTime()
@@ -39,7 +39,7 @@ local KittyDefaultSoundPack =
 	Credits = KittyUIFrame_AboutHeaderLabel_Text,
 	SoundDelay = 0.35,
 	LongSoundDelay = 1, -- for transitioning from 0 to 1
-	
+
 	Combo6StackSound0 = "Interface\\AddOns\\HearKitty\\Symphony\\0.ogg",
 	Combo6StackSound1 = "Interface\\AddOns\\HearKitty\\Symphony\\2.ogg", -- don't have another sound file for this one :(
 	Combo6StackSound2 = "Interface\\AddOns\\HearKitty\\Symphony\\1.ogg",
@@ -47,20 +47,20 @@ local KittyDefaultSoundPack =
 	Combo6StackSound4 = "Interface\\AddOns\\HearKitty\\Symphony\\3.ogg",
 	Combo6StackSound5 = "Interface\\AddOns\\HearKitty\\Symphony\\4.ogg",
 	Combo6StackSound6 = "Interface\\AddOns\\HearKitty\\Symphony\\5.ogg",
-	
+
 	Combo5StackSound0 = "Interface\\AddOns\\HearKitty\\Symphony\\0.ogg",
 	Combo5StackSound1 = "Interface\\AddOns\\HearKitty\\Symphony\\1.ogg",
 	Combo5StackSound2 = "Interface\\AddOns\\HearKitty\\Symphony\\2.ogg",
 	Combo5StackSound3 = "Interface\\AddOns\\HearKitty\\Symphony\\3.ogg",
 	Combo5StackSound4 = "Interface\\AddOns\\HearKitty\\Symphony\\4.ogg",
 	Combo5StackSound5 = "Interface\\AddOns\\HearKitty\\Symphony\\5.ogg",
-	
+
 	Combo4StackSound0 = "Interface\\AddOns\\HearKitty\\Symphony\\0.ogg",
 	Combo4StackSound1 = "Interface\\AddOns\\HearKitty\\Symphony\\1.ogg",
 	Combo4StackSound2 = "Interface\\AddOns\\HearKitty\\Symphony\\2.ogg",
 	Combo4StackSound3 = "Interface\\AddOns\\HearKitty\\Symphony\\4.ogg",
 	Combo4StackSound4 = "Interface\\AddOns\\HearKitty\\Symphony\\5.ogg",
-	
+
 	Combo3StackSound0 = "Interface\\AddOns\\HearKitty\\Symphony\\0.ogg",
 	Combo3StackSound1 = "Interface\\AddOns\\HearKitty\\Symphony\\3.ogg",
 	Combo3StackSound2 = "Interface\\AddOns\\HearKitty\\Symphony\\4.ogg",
@@ -94,9 +94,9 @@ function KittyOnEvent(self, Event, arg1, arg2)
 		KittyOnBuffsChange()
 	elseif Event == "PLAYER_SPECIALIZATION_CHANGED" then
 		KittyOnSpecChange()
-	elseif Event == "VARIABLES_LOADED" then 
+	elseif Event == "VARIABLES_LOADED" then
 		KittyInitialize()
-	end 
+	end
 end
 
 -- Initializes Hear Kitty after all saved variables have been loaded.
@@ -115,7 +115,7 @@ function KittyInitialize()
 	-- If they don't have any options set yet (no saved variable), reset them.  If they upgraded
 	-- from a previous version and are missing one or more options, fill them in with defaults.
 	KittyFillMissingOptions()
-	
+
 end
 
 -- When the player's spec changes, reset some of what we know about the character.
@@ -131,7 +131,7 @@ function KittyOnBuffsChange()
 	local _, Class = UnitClass("player")
 	local Spec
 	if GetSpecialization then Spec = GetSpecialization() end
-	
+
 	-- Check for the Preparation and Arena Preparation buffs.
 	KittyIsInArenaPreparation = false
 	BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 44521) -- Preparation
@@ -166,10 +166,10 @@ function KittyOnBuffsChange()
 			-- In 9.0.2, Maelstrom Weapon works similarly to Anticipation combo points: it stacks up to 10, but you only spend up to 5.
 		end
 	end
-	
+
 	-- If we didn't find any buffs, it's possible that we've already had a buff before and it's worn off.
 	if BuffCharges == nil then BuffCharges = 0 end
-	
+
 	if (BuffCharges > 0 or KittyEverHadBuffCharges) and (BuffCharges ~= KittyLastSoundPlayed) then
 		-- Buff charges may have changed.  Play the new sound effect.
 		-- (No-op if the number actually hasn't changed.)
@@ -267,7 +267,7 @@ function KittyOnInsanityChange()
 		Insanity = 1
 	else
 		Insanity = 0
-	end 
+	end
 
 	if (Insanity ~= KittyLastSoundPlayed) then
 		-- (No-op if the number actually hasn't changed.)
@@ -385,7 +385,7 @@ end
 -- Adds default values for any Hear Kitty options that are missing.  This can happen after an upgrade.
 function KittyFillMissingOptions()
 	if not KittyOptions then KittyOptions = {} end
-	
+
 	if KittyOptions.Enabled == nil then KittyOptions.Enabled = true end
 	if KittyOptions.SoundPack == nil then KittyOptions.SoundPack = KittyDefaultSoundPackInternalName end
 	if KittyOptions.Channel == nil then KittyOptions.Channel = "Master" end
@@ -490,7 +490,7 @@ function KittyComboSound(ComboPoints)
 		if KittyDebug then VgerCore.Message("*** Bailing out due to options") end
 		return
 	end
-	
+
 	-- What we do next depends on whether we've increased or decreased combo points.
 	if ComboPoints < KittyLastSoundPlayed then
 		-- If the number of combo points has decreased, then they must have spent some.  Play the zero
@@ -526,7 +526,7 @@ function KittyComboSound(ComboPoints)
 	else
 		if KittyDebug then VgerCore.Message("*** Didn't play anything because new combo points were last sound played") end
 	end
-	
+
 	-- Remember the last number played from this function so we can play the correct sounds next time.
 	KittyLastSoundPlayed = ComboPoints
 end
@@ -536,7 +536,7 @@ end
 function KittyPlaySoundRange(Start, End, FirstDuration)
 	VgerCore.Assert(Start <= End, "Start should be less than or equal to End.")
 	if Start > End then return end
-	
+
 	-- If there are other sounds waiting in the queue, just add to the queue and don't play anything immediately.
 	if KittyQueueActive then
 		if KittySoundOnTimer then
@@ -549,10 +549,10 @@ function KittyPlaySoundRange(Start, End, FirstDuration)
 		end
 		return
 	end
-	
+
 	-- Play the starting sound.
 	KittyPlayOneSound(Start)
-	
+
 	-- Finally, queue other sounds as necessary.
 	if Start == End then
 		-- We don't need to queue other sounds, but we do need to put "nothing" on the queue so that the next sound
@@ -573,7 +573,7 @@ function KittyPlayOneSound(ComboPoints, EvenIfOff)
 	VgerCore.Assert(KittyCurrentMaxStacks, "KittyCurrentMaxStacks should be set.")
 
 	if (not EvenIfOff) and (KittyIsInArenaPreparation or not KittyOptions.Enabled) then return end
-	
+
 	-- Look in the current sound pack for the appropriate sound to play.  If it's not present, look it
 	-- up in the default sound pack.
 	local SoundKey = "Combo" .. KittyCurrentMaxStacks .. "StackSound" .. ComboPoints
@@ -644,7 +644,7 @@ function KittyRegisterSoundPack(Name, Options)
 		VgerCore.Fail("Couldn't install this Hear Kitty sound pack because another one with the name \"" .. Name .. "\" has already been registered.")
 		return
 	end
-	
+
 	Options.Name = Name
 	KittySoundPacks[Name] = Options
 end
@@ -655,7 +655,7 @@ function KittySelectSoundPack(Name)
 		VgerCore.Fail("Usage: KittySelectSoundPack(\"Name\").  Name is the internal name of the sound pack, not the localized name.")
 		return
 	end
-	
+
 	KittyOptions.SoundPack = Name
 end
 
@@ -680,13 +680,13 @@ end
 -- Returns the live table of sound pack information.  Don't change it or Hear Kitty will scratch your eyes out!
 function KittyGetSoundPacks()
 	local TableCopy = { }
-	
+
 	local Name, Options
 	for Name, Options in pairs(KittySoundPacks) do
 		tinsert(TableCopy, Options)
 	end
 	sort(TableCopy, KittyLocalizedNameComparer)
-	
+
 	return TableCopy
 end
 
