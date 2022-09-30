@@ -146,7 +146,7 @@ function KittyOnBuffsChange()
 	BuffCharges = nil -- otherwise we'll skip checks for the real buffs
 
 	-- Frost mages' Icicles, only with Glacial Spike talent
-	if Class == "MAGE" and Spec == 3 then
+	if VgerCore.IsMainline and Class == "MAGE" and Spec == 3 then
 		local _, _, _, HasGlacialSpike = GetTalentInfo(7, 3, 1) -- Row 7, Column 3, Primary (1) spec
 		if HasGlacialSpike then
 			BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 205473)
@@ -158,12 +158,18 @@ function KittyOnBuffsChange()
 	end
 
 	-- Enhancement shamans' Maelstrom Weapon
-	if Class == "SHAMAN" and Spec == 2 then
+	if VgerCore.IsMainline and Class == "SHAMAN" and Spec == 2 then
 		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 344179)
 		if BuffCharges then
 			KittyThisResourceDecays = false
 			KittyCurrentMaxStacks = 5
 			-- In 9.0.2, Maelstrom Weapon works similarly to Anticipation combo points: it stacks up to 10, but you only spend up to 5.
+		end
+	elseif VgerCore.IsWrath and Class == "SHAMAN" then
+		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 53817)
+		if BuffCharges then
+			KittyThisResourceDecays = false
+			KittyCurrentMaxStacks = 5
 		end
 	end
 
@@ -708,7 +714,7 @@ KittyCoreFrame:RegisterEvent("VARIABLES_LOADED")
 KittyCoreFrame:RegisterEvent("UNIT_AURA")
 KittyCoreFrame:RegisterEvent("UNIT_POWER_UPDATE")
 if VgerCore.SpecsExist then
-	-- Event isn't present on Classic or Burning Crusade Classic
+	-- This event isn't present until Cataclysm when modern specs were added.
 	KittyCoreFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 end
 
