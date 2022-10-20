@@ -147,7 +147,7 @@ function KittyOnBuffsChange()
 
 	-- Frost mages' Icicles, only with Glacial Spike talent
 	if VgerCore.IsMainline and Class == "MAGE" and Spec == 3 then
-		local _, _, _, HasGlacialSpike = GetTalentInfo(7, 3, 1) -- Row 7, Column 3, Primary (1) spec
+		local _, _, _, HasGlacialSpike = GetTalentInfo(7, 3, 1) -- Row 7, Column 3, Primary (1) spec (surprisingly, this still works in 10.0 where it's no longer in that position)
 		if HasGlacialSpike then
 			BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 205473)
 			if BuffCharges then
@@ -287,7 +287,7 @@ function KittyOnAstralPowerChange()
 	local AstralPower = UnitPower("player", Enum.PowerType.AstralPower)
 
 	-- Get the relevant talent and Eclipse states.
-	local _, _, _, SoulOfTheForestSelected = GetTalentInfo(5, 1, 1)
+	local _, _, _, SoulOfTheForestSelected = GetTalentInfo(5, 1, 1) -- (surprisingly, this still works in 10.0 where it's no longer in that position)
 	local SolarActive = KittyAuraStacks("player", "PLAYER HELPFUL", 48517) ~= nil
 	local LunarActive = KittyAuraStacks("player", "PLAYER HELPFUL", 48518) ~= nil
 
