@@ -1,4 +1,4 @@
-## Interface: 90207
+## Interface: 100000
 ## Version: 1.9.6
 ## Title: Hear Kitty
 ## Notes: Hear Kitty plays sounds when you gain and spend combo points.
