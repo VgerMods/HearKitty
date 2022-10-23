@@ -40,8 +40,17 @@ local KittyDefaultSoundPack =
 	SoundDelay = 0.35,
 	LongSoundDelay = 1, -- for transitioning from 0 to 1
 
+	Combo7StackSound0 = "Interface\\AddOns\\HearKitty\\Symphony\\0.ogg",
+	Combo7StackSound1 = "Interface\\AddOns\\HearKitty\\Symphony\\1.ogg",
+	Combo7StackSound2 = "Interface\\AddOns\\HearKitty\\Symphony\\2.ogg",
+	Combo7StackSound3 = "Interface\\AddOns\\HearKitty\\Symphony\\1.ogg",
+	Combo7StackSound4 = "Interface\\AddOns\\HearKitty\\Symphony\\2.ogg",
+	Combo7StackSound5 = "Interface\\AddOns\\HearKitty\\Symphony\\3.ogg",
+	Combo7StackSound6 = "Interface\\AddOns\\HearKitty\\Symphony\\4.ogg",
+	Combo7StackSound7 = "Interface\\AddOns\\HearKitty\\Symphony\\5.ogg",
+
 	Combo6StackSound0 = "Interface\\AddOns\\HearKitty\\Symphony\\0.ogg",
-	Combo6StackSound1 = "Interface\\AddOns\\HearKitty\\Symphony\\2.ogg", -- don't have another sound file for this one :(
+	Combo6StackSound1 = "Interface\\AddOns\\HearKitty\\Symphony\\2.ogg",
 	Combo6StackSound2 = "Interface\\AddOns\\HearKitty\\Symphony\\1.ogg",
 	Combo6StackSound3 = "Interface\\AddOns\\HearKitty\\Symphony\\2.ogg",
 	Combo6StackSound4 = "Interface\\AddOns\\HearKitty\\Symphony\\3.ogg",
@@ -580,10 +589,45 @@ function KittyPlayOneSound(ComboPoints, EvenIfOff)
 
 	if (not EvenIfOff) and (KittyIsInArenaPreparation or not KittyOptions.Enabled) then return end
 
-	-- Look in the current sound pack for the appropriate sound to play.  If it's not present, look it
-	-- up in the default sound pack.
+	-- Look in the current sound pack for the appropriate sound to play. If it's not present, see if it's something
+	-- we can guess a decent sound for. If THAT'S not present, just use the sound from the default sound pack.
 	local SoundKey = "Combo" .. KittyCurrentMaxStacks .. "StackSound" .. ComboPoints
 	local Filename = KittyCurrentSoundPack()[SoundKey]
+	if not Filename then
+		-- This sound pack doesn't have a sound defined for this situation. See if we can pick a decent one from the
+		-- basic set of 5-point sounds.
+		local AltSoundKey
+		if KittyCurrentMaxStacks == 3 then
+			if ComboPoints == 0 then
+				AltSoundKey = "Combo5StackSound0"
+			else
+				AltSoundKey = "Combo5StackSound" .. (ComboPoints + 2)
+			end
+		elseif KittyCurrentMaxStacks == 4 then
+			if ComboPoints < 3 then
+				AltSoundKey = "Combo5StackSound" .. ComboPoints
+			else
+				AltSoundKey = "Combo5StackSound" .. (ComboPoints + 1)
+			end
+		elseif KittyCurrentMaxStacks == 6 then
+			if ComboPoints == 0 then
+				AltSoundKey = "Combo5StackSound0"
+			elseif ComboPoints == 1 then
+				AltSoundKey = "Combo5StackSound2"
+			else
+				AltSoundKey = "Combo5StackSound" .. (ComboPoints - 1)
+			end
+		elseif KittyCurrentMaxStacks == 7 then
+			if ComboPoints < 3 then
+				AltSoundKey = "Combo5StackSound" .. ComboPoints
+			elseif ComboPoints == 1 then
+				AltSoundKey = "Combo5StackSound" .. (ComboPoints - 2)
+			end
+		end
+		if AltSoundKey then
+			Filename = KittyCurrentSoundPack()[AltSoundKey]
+		end
+	end
 	if not Filename then Filename = KittyDefaultSoundPack[SoundKey] end
 	if not Filename then
 		VgerCore.Fail("Hear Kitty has no sound defined for " .. tostring(ComboPoints) .. "/" .. tostring(KittyCurrentMaxStacks) .. ".  Did an ability change?")
