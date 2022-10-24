@@ -620,11 +620,12 @@ function KittyPlayOneSound(ComboPoints, EvenIfOff)
 		elseif KittyCurrentMaxStacks == 7 then
 			if ComboPoints < 3 then
 				AltSoundKey = "Combo5StackSound" .. ComboPoints
-			elseif ComboPoints == 1 then
+			else
 				AltSoundKey = "Combo5StackSound" .. (ComboPoints - 2)
 			end
 		end
 		if AltSoundKey then
+			if KittyDebug then VgerCore.Message("[" .. ComboPoints .. "/" .. KittyCurrentMaxStacks .. "]  No sound defined to trying alternate:") end
 			Filename = KittyCurrentSoundPack()[AltSoundKey]
 		end
 	end
@@ -633,6 +634,7 @@ function KittyPlayOneSound(ComboPoints, EvenIfOff)
 		VgerCore.Fail("Hear Kitty has no sound defined for " .. tostring(ComboPoints) .. "/" .. tostring(KittyCurrentMaxStacks) .. ".  Did an ability change?")
 		Filename = "Combo5StackSound1"
 	end
+	if KittyDebug then VgerCore.Message("[" .. ComboPoints .. "/" .. KittyCurrentMaxStacks .. "]  "  .. Filename) end
 	PlaySoundFile(Filename, KittyOptions.Channel)
 end
 
