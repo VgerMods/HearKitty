@@ -9,7 +9,7 @@ if GetLocale() == "deDE" then
 
 KittyLocal =
 {
-	DefaultSoundPackName = "Symphonie", -- Needs review
+	DefaultSoundPackName = "Marcato", -- Needs review
 	DisabledCommand = "off", -- Needs review
 	DisabledMessage = "Hear Kitty Klänge sind deaktiviert.", -- Needs review
 	EnabledCommand = "on", -- Needs review

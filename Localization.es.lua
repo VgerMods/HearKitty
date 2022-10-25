@@ -9,7 +9,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
 
 KittyLocal =
 {
-	DefaultSoundPackName = "Sinfonía", -- Needs review
+	DefaultSoundPackName = "Marcato", -- Needs review
 	DisabledCommand = "off", -- Needs review
 	DisabledMessage = "Hear Kitty sonidos están desactivados.", -- Needs review
 	EnabledCommand = "on", -- Needs review

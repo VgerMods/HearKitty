@@ -30,5 +30,3 @@ KittyUIFrame_OnlyPlay5Check_Text = L.OptionsOnlyPlay5
 KittyUIFrame_OnlyPlay5Check_Tooltip = L.OptionsOnlyPlay5Tooltip
 KittyUIFrame_DoubleCritsCheck_Text = L.OptionsDoubleCrits
 KittyUIFrame_DoubleCritsCheck_Tooltip = L.OptionsDoubleCritsTooltip
-
-

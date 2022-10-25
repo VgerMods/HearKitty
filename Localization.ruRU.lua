@@ -9,7 +9,7 @@ if GetLocale() == "ruRU" then
 
 KittyLocal =
 {
-	DefaultSoundPackName = "Симфония", -- Needs review
+	DefaultSoundPackName = "Маркато", -- Needs review
 	DisabledCommand = "off", -- Needs review
 	DisabledMessage = "Звуки Hear Kitty отключены.", -- Needs review
 	EnabledCommand = "on", -- Needs review

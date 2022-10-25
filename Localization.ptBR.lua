@@ -9,7 +9,7 @@ if GetLocale() == "ptBR" then
 
 KittyLocal =
 {
-	DefaultSoundPackName = "Sinfonia", -- Needs review
+	DefaultSoundPackName = "Marcato", -- Needs review
 	DisabledCommand = "off", -- Needs review
 	DisabledMessage = "Hear Kitty sons estão desabilitados.", -- Needs review
 	EnabledCommand = "on", -- Needs review

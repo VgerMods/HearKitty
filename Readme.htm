@@ -144,6 +144,21 @@ vgermods.com</a>). Then, add <b>/hearkitty off</b> to your GyroStartRaid
 macro, and <b>/hearkitty on</b> to your GyroEndRaid macro. For more 
 information, see the readme that comes with the Gyro mod.</p>
 <h2>Release history</h2>
+<h3>Version 1.10.0</h3>
+<ul>
+	<li>For the first time ever, Hear Kitty comes with a new sound pack called 
+	Marcato! Marcato has more unique sounds than Symphony (the old default sound 
+	pack) in much higher audio quality.<ul>
+		<li>If you decide that you'd like to go back to the old sounds, they're 
+		still available—install the
+		<a href="https://www.curseforge.com/wow/addons/hear-kitty-alt-volume">
+		Hear Kitty official sound packs</a>. Then, you can select Symphony from 
+		the Hear Kitty options in Interface Options.</li>
+		<li>Quiet and Loud versions of Marcato will be included in the official 
+		sound packs download at a future date.</li>
+	</ul>
+	</li>
+</ul>
 <h3>Version 1.9.6</h3>
 <ul>
 	<li>Added support for resources that stack 7 times, such as Subtlety rogues 
@@ -539,42 +554,10 @@ properly after you click the option to load out-of-date addons.)</p>
 	with Hear Kitty, please let me know. Be sure to tell me how you'd 
 	expect it to work, since I probably don't play that spec. Feedback and 
 suggestions are appreciated!</p>
-<ul>
-	<li>Vengeance demon hunters—<a href="https://www.curseforge.com/wow/addons/pawn#c4425">soul 
-	fragments</a></li>
-	<li>Warlocks—soul shards (see ShardBar.lua) (old version: starting at level 
-	10, monitor 
-	UNIT_POWER_FREQUENT for SOUL_SHARDS and check UnitPower("player", 
-	SPELL_POWER_SOUL_SHARDS))</li>
-	<li>All death knights—add sounds for Blood Tap stacks.&nbsp; (There's a 
-	technical limitation preventing that right now—Hear Kitty doesn't have a way 
-	to track two things for the same player, but an unholy death knight could 
-	have stacks for both her ghoul and Blood Tap.&nbsp; Also that would probably 
-	be confusing so I'd have to decide how the two spells should interact.)</li>
-	<li>Feral kitties—add a sound effect at 25% boss health for when Blood in 
-	the Water kicks in (or 60% health if you have the set bonus).&nbsp; (I'd 
-	want to come up with some rules like "only do this if the boss is a 
-	skull-level enemy and has at least 10x my health" or something like that.)</li>
-	<li>Arms warriors—add sounds for Taste for Blood stacks.</li>
-	<li>Feral bears—Lacerate stacks.&nbsp; (Since Lacerate is a debuff on your 
-	target and not a buff on your character, and you can have Lacerate stacks on 
-	multiple targets, it's more complex and actually fairly different from other 
-	things that Hear Kitty currently tracks.)</li>
-	<li>Resto shamans—Tidal Wave stacks.</li>
-	<li>Beast mastery hunters—they have a buff that counts to 5.</li>
-	<li>Mage level 90 talent—Incanter's Flow stacks from 1 to 5, then from 5 to 
-	1, and then cycles, one stack per second over 10 seconds.&nbsp; (I'm not 
-	sure how to best handle it without being obnoxious—clearly you wouldn't want 
-	to hear a tone every single second all the time.&nbsp; But maybe every 10 
-	seconds when it hits 5, only when in combat?)</li>
-</ul>
 <h3>General</h3>
 <ul>
 	<li>Some people don't like hearing the "0" sound, so I should just add three 
 	independent options for playing: 0, 1 to (max - 1), and max.</li>
-	<li>I should add different sets of tones for resources that go to 3, 4, or 
-	6; right now they just reuse the tones for 5, and they sound particularly 
-	weird for 4- and 6-point resources.</li>
 	<li>I might add an optional alternate sound effect for when combat ends, 
 	instead of playing the normal "0 combo points" sound.</li>
 	<li>Paladins might want a more "final"-sounding tone at 3 holy power instead 

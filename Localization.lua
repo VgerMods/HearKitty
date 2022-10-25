@@ -10,7 +10,7 @@ if Locale ~= "ptBR" and Locale ~= "frFR" and Locale ~= "deDE" and Locale ~= "esE
 
 KittyLocal =
 {
-	DefaultSoundPackName = "Symphony",
+	DefaultSoundPackName = "Marcato",
 	DisabledCommand = "off",
 	DisabledMessage = "Hear Kitty sounds are disabled.",
 	EnabledCommand = "on",
