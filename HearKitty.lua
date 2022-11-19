@@ -6,7 +6,7 @@
 -- Main non-UI code
 ------------------------------------------------------------
 
-HearKittyVersion = 1.1000
+HearKittyVersion = 1.1001
 
 -- Hear Kitty requires this version of VgerCore:
 local KittyVgerCoreVersionRequired = 1.17
@@ -82,20 +82,24 @@ local KittyDefaultSoundPack =
 
 -- Called when an event that Hear Kitty cares about is fired.
 function KittyOnEvent(self, Event, arg1, arg2)
-	if Event == "UNIT_POWER_UPDATE" and arg1 == "player" and arg2 == "HOLY_POWER" then
-		KittyOnHolyPowerChange()
-	elseif Event == "UNIT_POWER_UPDATE" and arg1 == "player" and arg2 == "CHI" then
-		KittyOnChiChange()
-	elseif Event == "UNIT_POWER_UPDATE" and arg1 == "player" and arg2 == "MAELSTROM" then
-		KittyOnMaelstromChange()
-	elseif Event == "UNIT_POWER_UPDATE" and arg1 == "player" and arg2 == "SOUL_SHARDS" then
-		KittyOnSoulShardsChange()
-	elseif Event == "UNIT_POWER_UPDATE" and arg1 == "player" and arg2 == "INSANITY" then
-		KittyOnInsanityChange()
-	elseif Event == "UNIT_POWER_UPDATE" and arg1 == "player" and arg2 == "LUNAR_POWER" then
-		KittyOnAstralPowerChange()
-	elseif Event == "UNIT_POWER_UPDATE" and arg1 == "player" and arg2 == "ARCANE_CHARGES" then
-		KittyOnArcaneChargesChange()
+	if Event == "UNIT_POWER_UPDATE" and arg1 == "player" then
+		if arg2 == "HOLY_POWER" then
+			KittyOnHolyPowerChange()
+		elseif arg2 == "CHI" then
+			KittyOnChiChange()
+		elseif arg2 == "MAELSTROM" then
+			KittyOnMaelstromChange()
+		elseif arg2 == "SOUL_SHARDS" then
+			KittyOnSoulShardsChange()
+		elseif arg2 == "INSANITY" then
+				KittyOnInsanityChange()
+		elseif arg2 == "LUNAR_POWER" then
+				KittyOnAstralPowerChange()
+		elseif arg2 == "ARCANE_CHARGES" then
+			KittyOnArcaneChargesChange()
+		elseif arg2 == "ESSENCE" then
+			KittyOnEssenceChange()
+		end
 	elseif Event == "UNIT_POWER_UPDATE" and (arg1 == "player" or arg1 == "vehicle") and arg2 == "COMBO_POINTS" then
 		KittyOnComboPointsChange(arg1)
 	elseif Event == "UNIT_AURA" and arg1 == "player" then
@@ -361,6 +365,16 @@ function KittyOnComboPointsChange(Unit)
 		end
 		KittyLastComboPoints = ComboPoints
 		KittyComboSound(ComboPoints)
+	end
+end
+
+function KittyOnEssenceChange()
+	local Essence = UnitPower("player", Enum.PowerType.Essence)
+	if Essence > 0 and Essence ~= KittyLastSoundPlayed then
+		-- (No-op if the number actually hasn't changed.)
+		KittyCurrentMaxStacks = UnitPowerMax("player", Enum.PowerType.Essence)
+		KittyThisResourceDecays = true
+		KittyComboSound(Essence)
 	end
 end
 
