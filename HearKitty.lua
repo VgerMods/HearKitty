@@ -82,7 +82,9 @@ local KittyDefaultSoundPack =
 
 -- Called when an event that Hear Kitty cares about is fired.
 function KittyOnEvent(self, Event, arg1, arg2)
-	if Event == "UNIT_POWER_UPDATE" and arg1 == "player" then
+	if Event == "UNIT_POWER_UPDATE" and (arg1 == "player" or arg1 == "vehicle") and arg2 == "COMBO_POINTS" then
+		KittyOnComboPointsChange(arg1)
+	elseif Event == "UNIT_POWER_UPDATE" and arg1 == "player" then
 		if arg2 == "HOLY_POWER" then
 			KittyOnHolyPowerChange()
 		elseif arg2 == "CHI" then
@@ -100,8 +102,6 @@ function KittyOnEvent(self, Event, arg1, arg2)
 		elseif arg2 == "ESSENCE" then
 			KittyOnEssenceChange()
 		end
-	elseif Event == "UNIT_POWER_UPDATE" and (arg1 == "player" or arg1 == "vehicle") and arg2 == "COMBO_POINTS" then
-		KittyOnComboPointsChange(arg1)
 	elseif Event == "UNIT_AURA" and arg1 == "player" then
 		KittyOnBuffsChange()
 	elseif Event == "PLAYER_SPECIALIZATION_CHANGED" then
