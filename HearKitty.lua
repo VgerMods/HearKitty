@@ -185,6 +185,15 @@ function KittyOnBuffsChange()
 		end
 	end
 
+	-- Mistweaver Monk: Teachings of the Monastery
+	if Class == "MONK" and Spec == 2 then
+		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 202090)
+		if BuffCharges then
+			KittyThisResourceDecays = false
+			KittyCurrentMaxStacks = 3
+		end
+	end
+
 	-- If we didn't find any buffs, it's possible that we've already had a buff before and it's worn off.
 	if BuffCharges == nil then BuffCharges = 0 end
 
