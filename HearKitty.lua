@@ -169,6 +169,28 @@ function KittyOnBuffsChange()
 		end
 	end
 
+	-- Fire mages' Blessing of the Sun King talent
+	if VgerCore.IsMainline and Class == "MAGE" and Spec == 2 then
+		local Blessings = KittyAuraStacks("player", "PLAYER HELPFUL", 383883)
+		if Blessings then
+			-- The eighth and final stack is actually a separate buff.
+			Blessings = 8
+		else
+			Blessings = KittyAuraStacks("player", "PLAYER HELPFUL", 383882)
+		end
+		if Blessings then
+			KittyThisResourceDecays = false
+			if Blessings < 7 then
+				BuffCharges = 1
+			elseif Blessings == 7 then
+				BuffCharges = 2
+			elseif Blessings == 8 then
+				BuffCharges = 3
+			end
+			KittyCurrentMaxStacks = 3
+		end
+	end
+
 	-- Enhancement shamans' Maelstrom Weapon
 	if VgerCore.IsMainline and Class == "SHAMAN" and Spec == 2 then
 		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 344179)
@@ -700,7 +722,7 @@ function KittyAuraStacks(Unit, Filters, SpellID)
 		local BuffName, _, Stacks, _, _, _, _, _, _, ThisSpellID = UnitAura(Unit, i, Filters)
 		if not BuffName then break end -- We ran out of buffs
 		if ThisSpellID == SpellID then return Stacks end
-		--VgerCore.Message("#" .. i .. ": " .. name .. " " .. tostring(spellId))
+		--VgerCore.Message("#" .. i .. ": " .. BuffName .. " " .. tostring(ThisSpellID))
 	end
 end
 
