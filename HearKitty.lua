@@ -178,16 +178,11 @@ function KittyOnBuffsChange()
 		else
 			Blessings = KittyAuraStacks("player", "PLAYER HELPFUL", 383882)
 		end
-		if Blessings then
+		-- Count 5 tones from 4 to 8 stacks
+		if Blessings and Blessings > 3 then
 			KittyThisResourceDecays = false
-			if Blessings < 7 then
-				BuffCharges = 1
-			elseif Blessings == 7 then
-				BuffCharges = 2
-			elseif Blessings == 8 then
-				BuffCharges = 3
-			end
-			KittyCurrentMaxStacks = 3
+			BuffCharges = Blessings - 3
+			KittyCurrentMaxStacks = 5
 		end
 	end
 
