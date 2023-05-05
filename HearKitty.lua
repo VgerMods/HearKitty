@@ -85,7 +85,10 @@ function KittyOnEvent(self, Event, arg1, arg2)
 	if Event == "UNIT_POWER_UPDATE" and (arg1 == "player" or arg1 == "vehicle") and arg2 == "COMBO_POINTS" then
 		KittyOnComboPointsChange(arg1)
 	elseif Event == "UNIT_POWER_UPDATE" and arg1 == "player" then
-		if arg2 == "HOLY_POWER" then
+		if arg2 == "MANA" then
+			-- Very common case that we want to ignore
+			local ignore
+		elseif arg2 == "HOLY_POWER" then
 			KittyOnHolyPowerChange()
 		elseif arg2 == "CHI" then
 			KittyOnChiChange()
@@ -224,7 +227,7 @@ function KittyOnBuffsChange()
 end
 
 function KittyOnHolyPowerChange()
-	if UnitLevel("player") < PALADINPOWERBAR_SHOW_LEVEL then return end -- Can't spend holy power before level 9, so don't play any sounds.
+	if UnitLevel("player") < 2 then return end -- Can't spend holy power before level 2, so don't play any sounds.
 	local HolyPowerCharges = UnitPower("player", Enum.PowerType.HolyPower)
 	if (HolyPowerCharges > 0 or KittyEverHadHolyPowerCharges) and (HolyPowerCharges ~= KittyLastSoundPlayed) then
 		-- (No-op if the number actually hasn't changed.)
@@ -372,7 +375,7 @@ function KittyOnComboPointsChange(Unit)
 	else
 		ComboPoints = UnitPower(Unit, Enum.PowerType.ComboPoints)
 	end
-	if KittyDebug then VgerCore.Message("*** KITTYONCOMBOPOINTSCHANGE with Previous: " .. KittyLastComboPoints .. ", now: " .. ComboPoints .. ", last sound: " .. KittyLastSoundPlayed) end
+	if KittyDebug then VgerCore.Message("KITTYONCOMBOPOINTSCHANGE with Previous: " .. KittyLastComboPoints .. ", now: " .. ComboPoints .. ", last sound: " .. KittyLastSoundPlayed) end
 	if (ComboPoints ~= KittyLastComboPoints) then
 		-- (No-op if the number actually hasn't changed.)
 		KittyCurrentMaxStacks = UnitPowerMax(Unit, Enum.PowerType.ComboPoints)
@@ -383,7 +386,7 @@ function KittyOnComboPointsChange(Unit)
 			KittyCurrentMaxStacks = 5
 			if KittyLastComboPoints > 5 and ComboPoints == KittyLastComboPoints - 5 then
 				-- They previously had some Anticipation charges stored up, and they just got converted to combo points.  Play the zero sound.
-				if KittyDebug then VgerCore.Message("*** Combo points just converted to Anticipation charges") end
+				if KittyDebug then VgerCore.Message("Combo points just converted to Anticipation charges") end
 				 -- Override these so we'll start from 0 and then play up to the current total
 				KittyThisResourceDecays = false
 				KittyLastSoundPlayed = 10
@@ -515,11 +518,11 @@ end
 -- Plays the appropriate sound effect for when the number of combo points changes.
 -- This method does not check if sounds are currently enabled.
 function KittyComboSound(ComboPoints)
-	if KittyDebug then VgerCore.Message("*** KITTYCOMBOSOUND(" .. ComboPoints .. ") out of " .. KittyCurrentMaxStacks .. " and last sound " .. KittyLastSoundPlayed) end
+	if KittyDebug then VgerCore.Message("KITTYCOMBOSOUND(" .. ComboPoints .. ") out of " .. KittyCurrentMaxStacks .. " and last sound " .. KittyLastSoundPlayed) end
 	if ComboPoints < 0 then ComboPoints = 0 elseif ComboPoints > KittyCurrentMaxStacks then ComboPoints = KittyCurrentMaxStacks end
 	-- Don't replay the same sound we played last.
 	if ComboPoints == KittyLastSoundPlayed then
-		if KittyDebug then VgerCore.Message("*** Bailing out because we just played sound #" .. ComboPoints) end
+		if KittyDebug then VgerCore.Message("Bailing out because we just played sound #" .. ComboPoints) end
 		return
 	end
 
@@ -529,7 +532,7 @@ function KittyComboSound(ComboPoints)
 		KittyIsFirstBuffChange = nil
 		if GetTime() < (KittyLoadTime + 30) then
 			KittyLastSoundPlayed = ComboPoints
-			if KittyDebug then VgerCore.Message("*** Bailing out because we just started") end
+			if KittyDebug then VgerCore.Message("Bailing out because we just started") end
 			return
 		end
 	end
@@ -541,7 +544,7 @@ function KittyComboSound(ComboPoints)
 			KittyPlayOneSound(ComboPoints)
 		end
 		KittyLastSoundPlayed = ComboPoints
-		if KittyDebug then VgerCore.Message("*** Bailing out due to options") end
+		if KittyDebug then VgerCore.Message("Bailing out due to options") end
 		return
 	end
 
@@ -561,24 +564,24 @@ function KittyComboSound(ComboPoints)
 				-- deselect your target, and then have 2 by the time a new target is selected.  UNIT_COMBO_POINTS doesn't
 				-- fire between the 4 and 2, so it appears that the combo points were spent and 2 more were generated.
 				-- Maybe I need to save the unit ID of the target to catch that case.  Needs more investigation.  (As of 6.0)
-				if KittyDebug then VgerCore.Message("*** Staying quiet because points decayed to " .. ComboPoints) end
+				if KittyDebug then VgerCore.Message("Staying quiet because points decayed to " .. ComboPoints) end
 			else
 				-- They lost more than one of the resource since last time, OR they are now completely
 				-- out of their resource, so play the sound.
 				KittyPlayOneSound(ComboPoints)
-				if KittyDebug then VgerCore.Message("*** Playing single sound " .. ComboPoints) end
+				if KittyDebug then VgerCore.Message("Playing single sound " .. ComboPoints) end
 			end
 		else
 			KittyPlaySoundRange(0, ComboPoints, KittyGetSoundDelay(true))
-			if KittyDebug then VgerCore.Message("*** Playing a range from 0 to " .. ComboPoints) end
+			if KittyDebug then VgerCore.Message("Playing a range from 0 to " .. ComboPoints) end
 		end
 	elseif ComboPoints > KittyLastSoundPlayed then
 		-- If the number of combo points increased, play the new range of sounds.  If one's already queued,
 		-- we'll just queue more instead of playing anything immediately.
 		KittyPlaySoundRange(KittyLastSoundPlayed + 1, ComboPoints)
-		if KittyDebug then VgerCore.Message("*** Playing a range from " .. (KittyLastSoundPlayed + 1) .. " to " .. ComboPoints) end
+		if KittyDebug then VgerCore.Message("Playing a range from " .. (KittyLastSoundPlayed + 1) .. " to " .. ComboPoints) end
 	else
-		if KittyDebug then VgerCore.Message("*** Didn't play anything because new combo points were last sound played") end
+		if KittyDebug then VgerCore.Message("Didn't play anything because new combo points were last sound played") end
 	end
 
 	-- Remember the last number played from this function so we can play the correct sounds next time.
