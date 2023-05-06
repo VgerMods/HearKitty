@@ -16,7 +16,7 @@ function KittyUI_OnLoad()
 	KittyUIFrame.cancel = KittyUI_OnCancel
 	InterfaceOptions_AddCategory(KittyUIFrame)
 	-- Update the version display.
-	local Version = GetAddOnMetadata("HearKitty", "Version")
+	local Version = (C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata)("HearKitty", "Version")
 	if Version then 
 		KittyUIFrame_AboutVersionLabel:SetText(string.format(KittyUIFrame_AboutVersionLabel_Text, Version))
 	end
