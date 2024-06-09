@@ -82,6 +82,12 @@ local KittyDefaultSoundPack =
 
 -- Called when an event that Hear Kitty cares about is fired.
 function KittyOnEvent(self, Event, arg1, arg2)
+	local PetHasInterestingBuffs
+	if VgerCore.IsCataclysm then
+		local _, Class = UnitClass("player")
+		if Class == "DEATHKNIGHT" then PetHasInterestingBuffs = true end
+	end
+
 	if Event == "UNIT_POWER_UPDATE" and (arg1 == "player" or arg1 == "vehicle") and arg2 == "COMBO_POINTS" then
 		KittyOnComboPointsChange(arg1)
 	elseif Event == "UNIT_POWER_UPDATE" and arg1 == "player" then
@@ -105,7 +111,7 @@ function KittyOnEvent(self, Event, arg1, arg2)
 		elseif arg2 == "ESSENCE" then
 			KittyOnEssenceChange()
 		end
-	elseif Event == "UNIT_AURA" and arg1 == "player" then
+	elseif Event == "UNIT_AURA" and (arg1 == "player" or (PetHasInterestingBuffs and arg1 == "pet")) then
 		KittyOnBuffsChange()
 	elseif Event == "PLAYER_SPECIALIZATION_CHANGED" then
 		KittyOnSpecChange()
@@ -161,7 +167,7 @@ function KittyOnBuffsChange()
 	BuffCharges = nil -- otherwise we'll skip checks for the real buffs
 
 	-- Frost mages' Icicles, only with Glacial Spike talent
-	if VgerCore.IsMainline and Class == "MAGE" and Spec == 3 then
+	if BuffCharges == nil and VgerCore.IsMainline and Class == "MAGE" and Spec == 3 then
 		local _, _, _, HasGlacialSpike = GetTalentInfo(7, 3, 1) -- Row 7, Column 3, Primary (1) spec (surprisingly, this still works in 10.0 where it's no longer in that position)
 		if HasGlacialSpike then
 			BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 205473)
@@ -173,7 +179,7 @@ function KittyOnBuffsChange()
 	end
 
 	-- Fire mages' Blessing of the Sun King talent
-	if VgerCore.IsMainline and Class == "MAGE" and Spec == 2 then
+	if BuffCharges == nil and VgerCore.IsMainline and Class == "MAGE" and Spec == 2 then
 		local Blessings = KittyAuraStacks("player", "PLAYER HELPFUL", 383883)
 		if Blessings then
 			-- The eighth and final stack is actually a separate buff.
@@ -190,27 +196,92 @@ function KittyOnBuffsChange()
 	end
 
 	-- Enhancement shamans' Maelstrom Weapon
-	if VgerCore.IsMainline and Class == "SHAMAN" and Spec == 2 then
+	if BuffCharges == nil and VgerCore.IsMainline and Class == "SHAMAN" and Spec == 2 then
 		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 344179)
 		if BuffCharges then
 			KittyThisResourceDecays = false
 			KittyCurrentMaxStacks = 5
 			-- In 9.0.2, Maelstrom Weapon works similarly to Anticipation combo points: it stacks up to 10, but you only spend up to 5.
 		end
-	elseif VgerCore.IsWrath and Class == "SHAMAN" then
+	elseif BuffCharges == nil and (VgerCore.IsWrath or VgerCore.IsCataclysm) and Class == "SHAMAN" then
+		-- Maelstrom Weapon (enhancement)
 		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 53817)
+		if BuffCharges then
+			KittyThisResourceDecays = false
+			KittyCurrentMaxStacks = 5
+		else
+			-- Lightning Shield (elemental)
+			BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 324)
+			if BuffCharges then
+				-- If we've never had more than 3 stacks of Lightning Shield due to the Rolling Thunder talent,
+				-- we should ignore all stacks of Lightning Shield less than 5.
+				if BuffCharges < 5 and not KittyEverHadRollingThunderCharges then
+					BuffCharges = nil
+				else
+					if BuffCharges < 5 then
+						BuffCharges = nil
+					else
+						BuffCharges = BuffCharges - 4
+					end
+					KittyThisResourceDecays = true -- when hit!
+					KittyCurrentMaxStacks = 5
+					KittyEverHadRollingThunderCharges = true
+				end
+			end
+		end
+	end
+
+	-- Mistweaver Monk: Teachings of the Monastery
+	if BuffCharges == nil and Class == "MONK" and Spec == 2 then
+		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 202090)
+		if BuffCharges then
+			KittyThisResourceDecays = false
+			KittyCurrentMaxStacks = 3
+		end
+	end
+
+	-- Unholy death knight: Shadow Infusion (Classic)
+	if BuffCharges == nil and VgerCore.IsCataclysm and Class == "DEATHKNIGHT" then
+		BuffCharges = KittyAuraStacks("pet", "PLAYER HELPFUL", 91342)
 		if BuffCharges then
 			KittyThisResourceDecays = false
 			KittyCurrentMaxStacks = 5
 		end
 	end
 
-	-- Mistweaver Monk: Teachings of the Monastery
-	if Class == "MONK" and Spec == 2 then
-		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 202090)
+	-- Discipline priest: Evangelism (Classic)
+	if BuffCharges == nil and VgerCore.IsCataclysm and Class == "PRIEST" then
+		-- Evangelism is 81661. Dark Evangelism is 87118 but is for shadow priests which
+		-- already have shadow orbs to track, so we ignore Dark Evangelism.
+		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 81661)
+		if BuffCharges then
+			KittyThisResourceDecays = false
+			KittyCurrentMaxStacks = 5
+		end
+	end
+
+	-- Shadow priest: Shadow Orb (Classic)
+	if BuffCharges == nil and VgerCore.IsCataclysm and Class == "PRIEST" then
+		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 77487)
 		if BuffCharges then
 			KittyThisResourceDecays = false
 			KittyCurrentMaxStacks = 3
+		end
+	end
+
+	-- Marksmanship hunter: Ready, Set, Aim and Fire! (Classic)
+	if BuffCharges == nil and VgerCore.IsCataclysm and Class == "HUNTER" then
+		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 82926)
+		if BuffCharges then
+			-- Five stacks is a different buff, Fire!
+			BuffCharges = 5
+		else
+			-- One through four is Ready, Set, Aim.
+			BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 82925)
+		end
+		if BuffCharges then
+			KittyThisResourceDecays = false
+			KittyCurrentMaxStacks = 5
 		end
 	end
 
@@ -720,7 +791,7 @@ function KittyAuraStacks(Unit, Filters, SpellID)
 		local AuraData = C_UnitAuras.GetAuraDataByIndex(Unit, i, Filters)
 		if not AuraData then break end -- We ran out of buffs
 		if AuraData.spellId == SpellID then return AuraData.applications end
-		--VgerCore.Message("#" .. i .. ": " .. AuraData.name .. " " .. tostring(AuraData.spellId) .. " x " .. tostring(AuraData.applications))
+		--VgerCore.Message(Unit .. " #" .. i .. ": " .. AuraData.name .. " " .. tostring(AuraData.spellId) .. " x " .. tostring(AuraData.applications))
 	end
 end
 
