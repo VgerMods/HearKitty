@@ -71,8 +71,8 @@ so you only hear a sound when your combo points are maxed out.</p>
 you crit with an ability. By default, Hear Kitty will play both sound 
 effects when this happens. For example, if you had one combo point 
 already, and then got a crit that scored you two combo points, you'd normally 
-hear the &quot;two combo points&quot; sound quickly followed by the &quot;three combo points&quot; 
-sound. With this option checked (the default), you'd hear both sounds. If you uncheck it, you'll only hear the &quot;three combo points&quot; sound in this 
+hear the "two combo points" sound quickly followed by the "three combo points" 
+sound. With this option checked (the default), you'd hear both sounds. If you uncheck it, you'll only hear the "three combo points" sound in this 
 situation.</p>
 <h2>Slash commands</h2>
 <p>Hear Kitty supports a couple slash commands that you can use in macros.</p>
@@ -110,34 +110,34 @@ you can select from the Hear Kitty options once it's installed.</p>
 <span>fork this template repo on GitHub</span></a> and use it as a starting 
 point. (Or, just use the Download button there or browse the files manually.)</p>
 <ul>
-	<li>Rename the folder and .toc file to the same thing.&nbsp; I suggest 
+	<li>Rename the folder and .toc file to the same thing. I suggest 
 	"HearKitty_" and then the name of your sound pack.</li>
 	<li>Edit the .toc file to give your sound pack a friendly and recognizable 
 	name.</li>
 	<li>Edit the .lua file to give your sound pack two names: an "internal" name 
 	that never shows up in the UI, and the localized name that your users will 
-	see.&nbsp; Both should be unique.</li>
+	see. Both should be unique.</li>
 	<li>You can also choose how the Hear Kitty options will credit you when the 
 	user selects your sound pack.</li>
 	<li>Change the paths in the .lua file to point to your sound pack's sound 
-	files.&nbsp; For best results, save the sounds in Ogg Vorbis (.ogg) format 
-	and put them in the same folder as your sound pack, or a subfolder.&nbsp; 
-	(However, World of Warcraft also supports .wav and .mp3 sounds.)&nbsp; You can convert 
+	files. For best results, save the sounds in Ogg Vorbis (.ogg) format 
+	and put them in the same folder as your sound pack, or a subfolder. 
+	(However, World of Warcraft also supports .wav and .mp3 sounds.) You can convert 
 	a wide variety of different sound files to Ogg Vorbis 
 	files, as well as adjust volume and perform other edits, using the free
 <a href="http://audacity.sourceforge.net/download/" target="_blank">Audacity</a> 
-software.&nbsp; (There are
+software. (There are
 	<a href="http://www.hongkiat.com/blog/25-free-digital-audio-editors/" target="_blank">
 	many different free sound editors available</a>.)</li>
 	<li>After you've done all that, you'll have a folder containing a WoW addon 
-	that adds new sounds to Hear Kitty.&nbsp; Put that folder in with your other 
+	that adds new sounds to Hear Kitty. Put that folder in with your other 
 	addons.</li>
-	<li>Then, start up WoW, and your new addon should be ready for use.&nbsp; 
+	<li>Then, start up WoW, and your new addon should be ready for use. 
 	When you log into a character and then go to the Hear Kitty options, you'll 
 	see it there.</li>
 </ul>
 <h3>Disabling Hear Kitty sounds when you're in a raid</h3>
-<p>Another one of Vger's mods, &quot;Gyro: Get Your Raid On!&quot;, lets you set up macros 
+<p>Another one of Vger's mods, "Gyro: Get Your Raid On!", lets you set up macros 
 that are run whenever you join or leave a raid. If you want to set up Hear 
 Kitty so that sounds don't play when you're in a raid, first download Gyro from 
 your favorite mod site (or <a target="_blank" href="https://www.vgermods.com/">
@@ -145,8 +145,9 @@ vgermods.com</a>). Then, add <b>/hearkitty off</b> to your GyroStartRaid
 macro, and <b>/hearkitty on</b> to your GyroEndRaid macro. For more 
 information, see the readme that comes with the Gyro mod.</p>
 <h2>Release history</h2>
-<h3>Version 1.10.7</h3>
+<h3>Version 1.11.0</h3>
 <ul>
+	<li>The War Within and Cataclysm Classic: Hear Kitty now functions in these game versions. Let me know if you find a spec or class mechanic that Hear Kitty is supposed to support but doesn't seem to be working!</li>
 </ul>
 <h3>Version 1.10.6</h3>
 <ul>
@@ -193,7 +194,7 @@ information, see the readme that comes with the Gyro mod.</p>
 <h3>Version 1.9.6</h3>
 <ul>
 	<li>Added support for resources that stack 7 times, such as Subtlety rogues 
-	with the Deeper Strategem talent in Dragonflight / 10.0.&nbsp; (Thanks to 
+	with the Deeper Strategem talent in Dragonflight / 10.0. (Thanks to 
 	cybern4ut for help testing.)</li>
 	<li>When using a sound pack that doesn't support resources that count up to 
 	3, 4, 6, or 7, Hear Kitty will now try to pick a different sound from that sound pack instead of playing the default "Symphony" 
@@ -226,13 +227,13 @@ information, see the readme that comes with the Gyro mod.</p>
 </ul>
 <h3>Version 1.9.0</h3>
 <ul>
-	<li>Hear Kitty now works in WoW Classic!&nbsp; (Thanks to GH05TWARR10R for 
+	<li>Hear Kitty now works in WoW Classic! (Thanks to GH05TWARR10R for 
 	help testing.)</li>
 </ul>
 <h3>Version 1.8.3</h3>
 <ul>
 	<li>Fixed a problem where Hear Kitty wasn't working for frost mage Icicles, 
-	and was working differently than intended for shadow priests.&nbsp; (Special 
+	and was working differently than intended for shadow priests. (Special 
 	thanks to chiburrito!)</li>
 </ul>
 <h3>Version 1.8.2</h3>
@@ -254,7 +255,7 @@ information, see the readme that comes with the Gyro mod.</p>
 	<li>When using the rogue talent Anticipation, and spending combo points when 
 	you have excess combo points in reserve (the smaller dots), Hear Kitty will 
 	now play tones as if you spent your 5 points and then immediately got new 
-	ones from your reserves.&nbsp; For example, if you had 8 combo points and 
+	ones from your reserves. For example, if you had 8 combo points and 
 	then spent 5 of those, you'd hear the "finisher" (zero) tone, and then one, 
 	then two, then three.</li>
 </ul>
@@ -277,18 +278,18 @@ information, see the readme that comes with the Gyro mod.</p>
 	<li>Shadow priests: Tones will no longer play during Voidform, since your 
 	Insanity increases and decreases so frequently in that state.</li>
 	<li>Shadow priests: I changed the Insanity thresholds at which tones will 
-	play to better work with the Legacy of the Void talent.&nbsp; The fourth 
+	play to better work with the Legacy of the Void talent. The fourth 
 	tone will now play at 70 Insanity when Voidform activates with the talent, 
 	and the fifth plays at 100 when Insanity is capped.</li>
 	<li>Elemental shamans: I changed the Maelstrom thresholds at which tones 
-	will play to convey more useful information.&nbsp; The first tone will now 
+	will play to convey more useful information. The first tone will now 
 	play at 20 Maelstrom when Flame Shock and Frost Shock are at their maximum 
 	power, and the second tone will now play at 50 Maelstrom when Earthquake 
 	activates.</li>
 </ul>
 <h3>Version 1.7.2</h3>
 <ul>
-	<li>Removed support for WoW 6.2.x.&nbsp; This version should be slightly 
+	<li>Removed support for WoW 6.2.x. This version should be slightly 
 	faster than the previous version.</li>
 </ul>
 <h3>Version 1.7.1</h3>
@@ -304,14 +305,14 @@ properly after you click the option to load out-of-date addons.)</p>
 	<li>Adjusted the way that Hear Kitty tracks combo points on the Legion beta 
 	so that it will work again for feral druids and rogues.</li>
 	<li>Added support for the new Maelstrom resource for elemental and 
-	enhancement shamans on the Legion beta.&nbsp; Support for lightning shield 
+	enhancement shamans on the Legion beta. Support for lightning shield 
 	charges and Maelstrom Weapon charges is still in place for when using Hear 
 	Kitty on the live realms.</li>
 	<li>Added support for the new Insanity resource for shadow priests on the 
-	Legion beta.&nbsp; Support for shadow orbs is still in place for when using 
+	Legion beta. Support for shadow orbs is still in place for when using 
 	Hear Kitty on the live realms.</li>
 	<li>Added support for the sorta-new Soul Shards resource for all warlock 
-	specs on the Legion beta.&nbsp; Support for burning embers is still in place 
+	specs on the Legion beta. Support for burning embers is still in place 
 	for when using Hear Kitty on the live realms.</li>
 	<li>Adjusted the way that Hear Kitty tracks Arcane Charges on the Legion 
 	beta so that it will work again for arcane mages.</li>
@@ -351,7 +352,7 @@ properly after you click the option to load out-of-date addons.)</p>
 </ul>
 <h3>Version 1.5.3</h3>
 <ul>
-	<li>For Arcane Charges, Hear Kitty will play the proper tones.&nbsp; 
+	<li>For Arcane Charges, Hear Kitty will play the proper tones. 
 	(Previously it treated Arcane Charges as if they counted to six; now it 
 	counts to four.)</li>
 </ul>
@@ -369,8 +370,8 @@ properly after you click the option to load out-of-date addons.)</p>
 <h3>Version 1.5</h3>
 <ul>
 	<li>All Hear Kitty features, classes, and specs should now work for German, 
-	Spanish, French, Portuguese, and Russian players.&nbsp; Those languages also 
-	include a machine-translated UI.&nbsp; Some Hear Kitty features (but not all 
+	Spanish, French, Portuguese, and Russian players. Those languages also 
+	include a machine-translated UI. Some Hear Kitty features (but not all 
 	classes and specs) will work in other languages.<ul>
 		<li>If you have any suggestions or corrections to the existing machine 
 		translations, or would like to translate Hear Kitty into a different 
@@ -381,10 +382,10 @@ properly after you click the option to load out-of-date addons.)</p>
 	<li>Changed the way that holy power and chi work: previously Hear Kitty 
 	would not play a sound when spending only 1 of those resources, since it 
 	can't tell the difference between a resource that was spent and one that 
-	expired.&nbsp; That behavior was weird for Tiger Palm, which costs 1 chi and 
-	is used frequently.&nbsp; The new behavior is that Hear Kitty will continue 
+	expired. That behavior was weird for Tiger Palm, which costs 1 chi and 
+	is used frequently. The new behavior is that Hear Kitty will continue 
 	to play sounds when 1 chi is lost if you're in combat, or if it was your 
-	last chi, but not if you're out of combat and you still have some chi left.&nbsp; 
+	last chi, but not if you're out of combat and you still have some chi left. 
 	This behavior should be more pleasant and predictable.</li>
 	<li>Hear Kitty will no longer play sounds for gaining and losing holy power, chi, 
 	and shadow orbs when your level is too low to use those resources.</li>
@@ -395,14 +396,14 @@ properly after you click the option to load out-of-date addons.)</p>
 </ul>
 <h3>Version 1.4.3</h3>
 <ul>
-	<li>Updated the monk support for patch 5.1.&nbsp; (Chi used to be called 
-	"Light force" in the Blizzard code and that's what Hear Kitty tracked.&nbsp; 
+	<li>Updated the monk support for patch 5.1. (Chi used to be called 
+	"Light force" in the Blizzard code and that's what Hear Kitty tracked. 
 	Now it's called a more sensible "Chi".)</li>
 </ul>
 <h3>Version 1.4.2</h3>
 <ul>
 	<li>Hear Kitty will no longer play sounds for guardian druids who get 
-	Lightning Shield from a shaman through Symbiosis.&nbsp; (Please consider 
+	Lightning Shield from a shaman through Symbiosis. (Please consider 
 	this bug payback for all those times I got your stupid Prowl ability in 
 	return.)</li>
 	<li>Updated Ready, Set, Aim... (marksmanship hunters) for 5.0 so that it 
@@ -419,7 +420,7 @@ properly after you click the option to load out-of-date addons.)</p>
 </ul>
 <h3>Version 1.4</h3>
 <ul>
-	<li>This version of Hear Kitty is for World of Warcraft 5.0 only.&nbsp; It 
+	<li>This version of Hear Kitty is for World of Warcraft 5.0 only. It 
 	will not work properly for all classes and specs on old versions of World of 
 	Warcraft.</li>
 	<li>Changes were made to the following classes and specs to make them work 
@@ -435,7 +436,7 @@ properly after you click the option to load out-of-date addons.)</p>
 	</ul>
 	</li>
 	<li>Note that older Hear Kitty sound packs will not work properly for 
-	elemental shamans and monks when using Hear Kitty 1.4.&nbsp; Be sure to 
+	elemental shamans and monks when using Hear Kitty 1.4. Be sure to 
 	upgrade your sound packs too!</li>
 </ul>
 <h3>Version 1.3.2</h3>
@@ -456,8 +457,8 @@ properly after you click the option to load out-of-date addons.)</p>
 	ghouls).</li>
 	<li>Added support for elemental shamans (extra Lightning Shield charges due 
 	to Rolling Thunder, starting at the fifth stack).</li>
-	<li>Added support for discipline priests (Evangelism stacks).&nbsp; Only 
-	stacks of Evangelism are counted, not Dark Evangelism.&nbsp; The tones for 
+	<li>Added support for discipline priests (Evangelism stacks). Only 
+	stacks of Evangelism are counted, not Dark Evangelism. The tones for 
 	the stacks are played regardless of whether Archangel is off cooldown.</li>
 	<li>Added support for shadow priests (Shadow Orb stacks).</li>
 	<li>Added support for marksmanship hunters (Ready, Set, Aim... and Fire! 
@@ -477,11 +478,11 @@ properly after you click the option to load out-of-date addons.)</p>
 <ul>
 	<li>Hear Kitty now supports installable sound packs to customize the Hear 
 	Kitty sounds to your liking without having to manually replace files each 
-	time you update Hear Kitty.&nbsp; You can change your sound pack in the Hear 
+	time you update Hear Kitty. You can change your sound pack in the Hear 
 	Kitty options.</li>
 	<li>Added a new option to let you control the volume and muting of Hear 
-	Kitty sounds using the in-game Sound Effects volume settings.&nbsp; This was 
-	the behavior of Hear Kitty since patch 4.0 until now.&nbsp; This option is 
+	Kitty sounds using the in-game Sound Effects volume settings. This was 
+	the behavior of Hear Kitty since patch 4.0 until now. This option is 
 	off by default, so the Sound Effects volume and muting settings don't affect 
 	Hear Kitty, which was the behavior before patch 4.0.</li>
 	<li>Fixed some minor UI issues that occurred when clicking Cancel in the 
@@ -489,7 +490,7 @@ properly after you click the option to load out-of-date addons.)</p>
 </ul>
 <h3>Version 1.1.8</h3>
 <ul>
-	<li>The &quot;only play a sound at five combo points&quot; option has been renamed and 
+	<li>The "only play a sound at five combo points" option has been renamed and 
 	also now allows you to set up Hear Kitty so that it only plays a tone when 
 	you reach three Holy Power, and stays silent on the first two charges.</li>
 </ul>
@@ -524,7 +525,7 @@ properly after you click the option to load out-of-date addons.)</p>
 </ul>
 <h3>Version 1.1.2</h3>
 <ul>
-	<li>Added support for vehicles and mounts with combo points.&nbsp; The only 
+	<li>Added support for vehicles and mounts with combo points. The only 
 	quest that I'm aware of where you use such a vehicle is
 	<a href="http://www.wowhead.com/?quest=13414" target="_blank">Aces High!</a>, 
 	but there may be more.)</li>
@@ -536,13 +537,13 @@ properly after you click the option to load out-of-date addons.)</p>
 <h3>Version 1.1</h3>
 <ul>
 	<li>Hear Kitty now has a UI for changing options in the AddOns section of 
-	Interface Options.&nbsp; You can also get to it by typing /hearkitty.</li>
+	Interface Options. You can also get to it by typing /hearkitty.</li>
 	<li>Now supports playing a longer string of sound effects on when gaining 
-	more than two combo points.&nbsp; For example, if you had one combo point 
+	more than two combo points. For example, if you had one combo point 
 	and gained three more from one attack, sounds 2, 3, and 4 would be played by 
 	default.</li>
 	<li>Now supports talents that give you a combo point on a finishing move 
-	(Ruthlessness).&nbsp; For example, if you had two combo points and then did 
+	(Ruthlessness). For example, if you had two combo points and then did 
 	a finishing move that gave you a bonus combo point, sounds 0 and 1 would be 
 	played by default.</li>
 	<li>Fixed an occasional bug where if you gained two combo points in rapid 
@@ -556,7 +557,7 @@ properly after you click the option to load out-of-date addons.)</p>
 </ul>
 <h3>Version 1.0</h3>
 <ul>
-	<li>Hear Kitty is now version 1.0!&nbsp; It now includes VgerCore 1.0 
+	<li>Hear Kitty is now version 1.0! It now includes VgerCore 1.0 
 	embedded within the mod, so you don't need a separate VgerCore folder in 
 	your AddOns folder.</li>
 </ul>
@@ -600,7 +601,7 @@ suggestions are appreciated!</p>
 	<li>It's been suggested that warriors and bears would like a warning sound 
 	when they hit 60 rage.</li>
 	<li>It's been suggested that some rogues would like the 4 sound to sound 
-	more "final" since that's when they use finishers.&nbsp; (Custom-defined 
+	more "final" since that's when they use finishers. (Custom-defined 
 	resource thresholds?)</li>
 </ul>
 <h2>The fine print</h2>

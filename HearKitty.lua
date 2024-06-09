@@ -6,7 +6,7 @@
 -- Main non-UI code
 ------------------------------------------------------------
 
-HearKittyVersion = 1.1007
+HearKittyVersion = 1.1100
 
 -- Hear Kitty requires this version of VgerCore:
 local KittyVgerCoreVersionRequired = 1.17
@@ -369,7 +369,7 @@ end
 
 function KittyOnComboPointsChange(Unit)
 	local ComboPoints
-	if Unit == "vehicle" then
+	if GetComboPoints and Unit == "vehicle" then
 		-- WoW 7.0 (in beta) has a bug where vehicle combo points raise the UNIT_POWER event, but can only be retrieved with the legacy GetComboPoints.
 		ComboPoints = GetComboPoints(Unit)
 	else
@@ -707,7 +707,7 @@ end
 -- Based on a unit, spell ID, and filters, return stack information for a specific spell.
 -- Parameters:
 --    Unit: The unit to check, such as "player".
---    Filters: Filters to specify which types of auras to look at, such as "PLAYER HELPFUL".  (See UnitAura documentation for specifics.)
+--    Filters: Filters to specify which types of auras to look at, such as "PLAYER HELPFUL".  (See C_UnitAuras.GetAuraDataByIndex documentation for specifics.)
 --    SpellID: The spell ID to look for, such as 123456.
 -- Returns:
 --    Stacks: The stack information, which could be:
@@ -717,10 +717,10 @@ end
 function KittyAuraStacks(Unit, Filters, SpellID)
 	local i
 	for i = 1, BUFF_MAX_DISPLAY do
-		local BuffName, _, Stacks, _, _, _, _, _, _, ThisSpellID = UnitAura(Unit, i, Filters)
-		if not BuffName then break end -- We ran out of buffs
-		if ThisSpellID == SpellID then return Stacks end
-		--VgerCore.Message("#" .. i .. ": " .. BuffName .. " " .. tostring(ThisSpellID))
+		local AuraData = C_UnitAuras.GetAuraDataByIndex(Unit, i, Filters)
+		if not AuraData then break end -- We ran out of buffs
+		if AuraData.spellId == SpellID then return AuraData.applications end
+		--VgerCore.Message("#" .. i .. ": " .. AuraData.name .. " " .. tostring(AuraData.spellId) .. " x " .. tostring(AuraData.applications))
 	end
 end
 

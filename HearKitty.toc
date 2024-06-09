@@ -1,5 +1,5 @@
 ## Interface: 100207
-## Version: 1.10.7
+## Version: 1.11.0
 ## Title: Hear Kitty
 ## Notes: Hear Kitty plays sounds when you gain and spend combo points.
 ## SavedVariablesPerCharacter: KittyOptions
