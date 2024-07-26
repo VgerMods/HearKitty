@@ -9,23 +9,33 @@ local KittyUICancelOptions = nil
 -- Interface Options
 ------------------------------------------------------------
 
+local HearKittyOptionsCategory
+
 function KittyUI_OnLoad()
 	-- Register the Interface Options page.
 	KittyUIFrame.name = "Hear Kitty"
+	KittyUIFrame.ID = KittyUIFrame.name
 	KittyUIFrame.default = KittyUI_OnDefaults
 	KittyUIFrame.cancel = KittyUI_OnCancel
-	if InterfaceOptions_AddCategory then
+	if Settings and Settings.RegisterCanvasLayoutCategory then
+		HearKittyOptionsCategory = Settings.RegisterCanvasLayoutCategory(KittyUIFrame, KittyUIFrame.name)
+		Settings.RegisterAddOnCategory(HearKittyOptionsCategory)
+	elseif InterfaceOptions_AddCategory then
 		InterfaceOptions_AddCategory(KittyUIFrame)
 	end
 	-- Update the version display.
-	local Version = C_AddOns.GetAddOnMetadata("HearKitty", "Version")
-	if Version then 
+	local Version = C_AddOns.GetAddOnMetadata("Hear Kitty", "Version")
+	if Version then
 		KittyUIFrame_AboutVersionLabel:SetText(string.format(KittyUIFrame_AboutVersionLabel_Text, Version))
 	end
 end
 
 function KittyUI_Show()
-	InterfaceOptionsFrame_OpenToCategory(KittyUIFrame)
+	if Settings and Settings.OpenToCategory then
+		Settings.OpenToCategory(HearKittyOptionsCategory)
+	elseif InterfaceOptionsFrame_OpenToCategory then
+		InterfaceOptionsFrame_OpenToCategory(KittyUIFrame)
+	end
 end
 
 function KittyUI_OnShow()
