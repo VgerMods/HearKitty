@@ -236,7 +236,7 @@ function KittyOnBuffsChange()
 		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 202090)
 		if BuffCharges then
 			KittyThisResourceDecays = false
-			KittyCurrentMaxStacks = 3
+			KittyCurrentMaxStacks = 4
 		end
 	end
 
