@@ -236,6 +236,7 @@ function KittyOnBuffsChange()
 		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 202090)
 		if BuffCharges then
 			KittyThisResourceDecays = false
+			-- Prior to 11.0 / The War Within this was 3 stacks.
 			KittyCurrentMaxStacks = 4
 		end
 	end
