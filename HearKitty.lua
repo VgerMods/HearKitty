@@ -88,8 +88,6 @@ function KittyOnEvent(self, Event, arg1, arg2)
 		if Class == "DEATHKNIGHT" then PetHasInterestingBuffs = true end
 	end
 
-	
-
 	if Event == "UNIT_POWER_UPDATE" and (arg1 == "player" or arg1 == "vehicle") and arg2 == "COMBO_POINTS" then
 		KittyOnComboPointsChange(arg1)
 	elseif Event == "UNIT_POWER_UPDATE" and arg1 == "player" then
