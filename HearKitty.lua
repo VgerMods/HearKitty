@@ -88,6 +88,8 @@ function KittyOnEvent(self, Event, arg1, arg2)
 		if Class == "DEATHKNIGHT" then PetHasInterestingBuffs = true end
 	end
 
+	
+
 	if Event == "UNIT_POWER_UPDATE" and (arg1 == "player" or arg1 == "vehicle") and arg2 == "COMBO_POINTS" then
 		KittyOnComboPointsChange(arg1)
 	elseif Event == "UNIT_POWER_UPDATE" and arg1 == "player" then
@@ -399,6 +401,20 @@ end
 function KittyOnAstralPowerChange()
 	local AstralPower = UnitPower("player", Enum.PowerType.AstralPower)
 
+	-- Druid's do not need Astral Power change sounds unless in Balance spec. This happens since 11.0 due to the new Elune's Chosen talent tree and the "Evoke the Spirits" spell, which
+	-- are both available in druid specs that do not utilize Astral Power.
+	local className, classEnglish, classID = UnitClass("player")
+	if classEnglish == "DRUID" then
+		local specIndex = GetSpecialization()
+		if specIndex then
+			local specID, specName = GetSpecializationInfo(specIndex)
+			if specName ~= "Balance" then
+				if KittyDebug then VgerCore.Message("Druid: Astral Power change event ignored since not in Balance Spec.") end
+				return
+			end
+		end
+	end
+
 	-- Get the relevant talent and Eclipse states.
 	local _, _, _, SoulOfTheForestSelected = GetTalentInfo(5, 1, 1) -- (surprisingly, this still works in 10.0 where it's no longer in that position)
 	local SolarActive = KittyAuraStacks("player", "PLAYER HELPFUL", 48517) ~= nil
@@ -441,6 +457,20 @@ end
 
 function KittyOnComboPointsChange(Unit)
 	local ComboPoints
+
+	-- Druid's do not need Combo Points change sounds unless in Feral spec.  This fires sometimes with Guardian because "Convoke the Spirits" will often spew Feral spells/abilities.
+	local className, classEnglish, classID = UnitClass("player")
+	if classEnglish == "DRUID" then
+		local specIndex = GetSpecialization()
+		if specIndex then
+			local specID, specName = GetSpecializationInfo(specIndex)
+			if specName ~= "Feral" then
+				if KittyDebug then VgerCore.Message("Druid: Combo points change event ignored since not in Feral Spec.") end
+				return
+			end
+		end
+	end
+
 	if GetComboPoints and Unit == "vehicle" then
 		-- WoW 7.0 (in beta) has a bug where vehicle combo points raise the UNIT_POWER event, but can only be retrieved with the legacy GetComboPoints.
 		ComboPoints = GetComboPoints(Unit)
@@ -640,18 +670,18 @@ function KittyComboSound(ComboPoints)
 			else
 				-- They lost more than one of the resource since last time, OR they are now completely
 				-- out of their resource, so play the sound.
-				KittyPlayOneSound(ComboPoints)
 				if KittyDebug then VgerCore.Message("Playing single sound " .. ComboPoints) end
+				KittyPlayOneSound(ComboPoints)
 			end
 		else
-			KittyPlaySoundRange(0, ComboPoints, KittyGetSoundDelay(true))
 			if KittyDebug then VgerCore.Message("Playing a range from 0 to " .. ComboPoints) end
+			KittyPlaySoundRange(0, ComboPoints, KittyGetSoundDelay(true))
 		end
 	elseif ComboPoints > KittyLastSoundPlayed then
 		-- If the number of combo points increased, play the new range of sounds.  If one's already queued,
 		-- we'll just queue more instead of playing anything immediately.
-		KittyPlaySoundRange(KittyLastSoundPlayed + 1, ComboPoints)
 		if KittyDebug then VgerCore.Message("Playing a range from " .. (KittyLastSoundPlayed + 1) .. " to " .. ComboPoints) end
+		KittyPlaySoundRange(KittyLastSoundPlayed + 1, ComboPoints)
 	else
 		if KittyDebug then VgerCore.Message("Didn't play anything because new combo points were last sound played") end
 	end
