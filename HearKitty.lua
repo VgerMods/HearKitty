@@ -399,19 +399,10 @@ end
 function KittyOnAstralPowerChange()
 	local AstralPower = UnitPower("player", Enum.PowerType.AstralPower)
 
-	-- Druid's do not need Astral Power change sounds unless in Balance spec. This happens since 11.0 due to the new Elune's Chosen talent tree and the "Evoke the Spirits" spell, which
-	-- are both available in druid specs that do not utilize Astral Power.
-	local className, classEnglish, classID = UnitClass("player")
-	if classEnglish == "DRUID" then
-		local specIndex = GetSpecialization()
-		if specIndex then
-			local specID, specName = GetSpecializationInfo(specIndex)
-			if specName ~= "Balance" then
-				if KittyDebug then VgerCore.Message("Druid: Astral Power change event ignored since not in Balance Spec.") end
-				return
-			end
-		end
-	end
+	-- Druids do not need Astral Power change sounds unless in Balance spec. Astral power updates started firing in 11.0 for non-balance specs when using the Elune's Chosen hero class or the Convoke the Spirits talent.
+	-- Also, ignore astral power changes when in cat form in any spec, since we can only track one resource at a time.
+	local _, Class = UnitClass("player")
+	if Class ~= "DRUID" or not GetSpecialization or GetSpecialization() ~= 1 or GetShapeshiftFormID() == 1 then return end
 
 	-- Get the relevant talent and Eclipse states.
 	local _, _, _, SoulOfTheForestSelected = GetTalentInfo(5, 1, 1) -- (surprisingly, this still works in 10.0 where it's no longer in that position)
@@ -456,18 +447,9 @@ end
 function KittyOnComboPointsChange(Unit)
 	local ComboPoints
 
-	-- Druid's do not need Combo Points change sounds unless in Feral spec.  This fires sometimes with Guardian because "Convoke the Spirits" will often spew Feral spells/abilities.
-	local className, classEnglish, classID = UnitClass("player")
-	if classEnglish == "DRUID" then
-		local specIndex = GetSpecialization()
-		if specIndex then
-			local specID, specName = GetSpecializationInfo(specIndex)
-			if specName ~= "Feral" then
-				if KittyDebug then VgerCore.Message("Druid: Combo points change event ignored since not in Feral Spec.") end
-				return
-			end
-		end
-	end
+	-- Ignore combo point changes for druids not in cat form, such as when combo points decay after leaving cat form, or when the Convoke the Spirits uses cat form abilities in other forms.
+	local _, Class = UnitClass("player")
+	if Class == "DRUID" and GetShapeshiftFormID() ~= 1 then return end
 
 	if GetComboPoints and Unit == "vehicle" then
 		-- WoW 7.0 (in beta) has a bug where vehicle combo points raise the UNIT_POWER event, but can only be retrieved with the legacy GetComboPoints.
