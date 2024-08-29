@@ -399,6 +399,11 @@ end
 function KittyOnAstralPowerChange()
 	local AstralPower = UnitPower("player", Enum.PowerType.AstralPower)
 
+	-- Druids do not need Astral Power change sounds unless in Balance spec. Astral power updates started firing in 11.0 for non-balance specs when using the Elune's Chosen hero class or the Convoke the Spirits talent.
+	-- Also, ignore astral power changes when in cat form in any spec, since we can only track one resource at a time.
+	local _, Class = UnitClass("player")
+	if Class ~= "DRUID" or not GetSpecialization or GetSpecialization() ~= 1 or GetShapeshiftFormID() == 1 then return end
+
 	-- Get the relevant talent and Eclipse states.
 	local _, _, _, SoulOfTheForestSelected = GetTalentInfo(5, 1, 1) -- (surprisingly, this still works in 10.0 where it's no longer in that position)
 	local SolarActive = KittyAuraStacks("player", "PLAYER HELPFUL", 48517) ~= nil
@@ -441,6 +446,11 @@ end
 
 function KittyOnComboPointsChange(Unit)
 	local ComboPoints
+
+	-- Ignore combo point changes for druids not in cat form, such as when combo points decay after leaving cat form, or when the Convoke the Spirits uses cat form abilities in other forms.
+	local _, Class = UnitClass("player")
+	if Class == "DRUID" and GetShapeshiftFormID() ~= 1 then return end
+
 	if GetComboPoints and Unit == "vehicle" then
 		-- WoW 7.0 (in beta) has a bug where vehicle combo points raise the UNIT_POWER event, but can only be retrieved with the legacy GetComboPoints.
 		ComboPoints = GetComboPoints(Unit)
@@ -640,18 +650,18 @@ function KittyComboSound(ComboPoints)
 			else
 				-- They lost more than one of the resource since last time, OR they are now completely
 				-- out of their resource, so play the sound.
-				KittyPlayOneSound(ComboPoints)
 				if KittyDebug then VgerCore.Message("Playing single sound " .. ComboPoints) end
+				KittyPlayOneSound(ComboPoints)
 			end
 		else
-			KittyPlaySoundRange(0, ComboPoints, KittyGetSoundDelay(true))
 			if KittyDebug then VgerCore.Message("Playing a range from 0 to " .. ComboPoints) end
+			KittyPlaySoundRange(0, ComboPoints, KittyGetSoundDelay(true))
 		end
 	elseif ComboPoints > KittyLastSoundPlayed then
 		-- If the number of combo points increased, play the new range of sounds.  If one's already queued,
 		-- we'll just queue more instead of playing anything immediately.
-		KittyPlaySoundRange(KittyLastSoundPlayed + 1, ComboPoints)
 		if KittyDebug then VgerCore.Message("Playing a range from " .. (KittyLastSoundPlayed + 1) .. " to " .. ComboPoints) end
+		KittyPlaySoundRange(KittyLastSoundPlayed + 1, ComboPoints)
 	else
 		if KittyDebug then VgerCore.Message("Didn't play anything because new combo points were last sound played") end
 	end
