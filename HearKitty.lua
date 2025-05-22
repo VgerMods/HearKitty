@@ -200,8 +200,19 @@ function KittyOnBuffsChange()
 		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 344179)
 		if BuffCharges then
 			KittyThisResourceDecays = false
-			KittyCurrentMaxStacks = 5
-			-- In 9.0.2, Maelstrom Weapon works similarly to Anticipation combo points: it stacks up to 10, but you only spend up to 5.
+			-- In 9.0.2, Maelstrom Weapon worked similarly to Anticipation combo points: it stacks up to 10, but you only spend up to 5.
+			-- KittyCurrentMaxStacks = 5
+			-- As of 11.0, you should never spend before 5, 8 is the recommended minimum, and 10 is the ideal max.
+			KittyCurrentMaxStacks = 3
+			if BuffCharges < 5 then
+				BuffCharges = 0
+			elseif BuffCharges < 8 then
+				BuffCharges = 1
+			elseif BuffCharges < 10 then
+				BuffCharges = 2
+			else
+				BuffCharges = 3
+			end
 		end
 	elseif BuffCharges == nil and (VgerCore.IsWrath or VgerCore.IsCataclysm) and Class == "SHAMAN" then
 		-- Maelstrom Weapon (enhancement)
@@ -452,7 +463,7 @@ function KittyOnComboPointsChange(Unit)
 	if Class == "DRUID" and GetShapeshiftFormID() ~= 1 then return end
 
 	if GetComboPoints and Unit == "vehicle" then
-		-- WoW 7.0 (in beta) has a bug where vehicle combo points raise the UNIT_POWER event, but can only be retrieved with the legacy GetComboPoints.
+		-- WoW 7.0 has a bug where vehicle combo points raise the UNIT_POWER event, but can only be retrieved with the legacy GetComboPoints.
 		ComboPoints = GetComboPoints(Unit)
 	else
 		ComboPoints = UnitPower(Unit, Enum.PowerType.ComboPoints)
