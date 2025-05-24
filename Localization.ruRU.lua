@@ -1,4 +1,4 @@
-﻿-- Hear Kitty  by ZamestoTV
+﻿-- Hear Kitty  translator ZamestoTV
 -- 
 -- Russian resources
 
