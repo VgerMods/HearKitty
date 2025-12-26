@@ -6,10 +6,10 @@
 -- Main non-UI code
 ------------------------------------------------------------
 
-HearKittyVersion = 1.1200
+HearKittyVersion = 1.1201
 
 -- Hear Kitty requires this version of VgerCore:
-local KittyVgerCoreVersionRequired = 1.17
+local KittyVgerCoreVersionRequired = 1.21
 
 -- Timer
 local KittyLoadTime = GetTime()
