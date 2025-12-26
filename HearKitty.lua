@@ -6,7 +6,7 @@
 -- Main non-UI code
 ------------------------------------------------------------
 
-HearKittyVersion = 1.1106
+HearKittyVersion = 1.1200
 
 -- Hear Kitty requires this version of VgerCore:
 local KittyVgerCoreVersionRequired = 1.17
@@ -808,6 +808,9 @@ end
 --        0: The buff is present, but doesn't stack.
 --        1+: The buff is present, and has this many stacks. 
 function KittyAuraStacks(Unit, Filters, SpellID)
+	-- Starting in Midnight, we no longer have access to buff information during combat.
+	if VgerCore.IsMidnight then return nil end
+
 	local i
 	for i = 1, BUFF_MAX_DISPLAY do
 		local AuraData = C_UnitAuras.GetAuraDataByIndex(Unit, i, Filters)
@@ -895,7 +898,6 @@ KittyCoreFrame:RegisterEvent("VARIABLES_LOADED")
 KittyCoreFrame:RegisterEvent("UNIT_AURA")
 KittyCoreFrame:RegisterEvent("UNIT_POWER_UPDATE")
 if VgerCore.SpecsExist then
-	-- This event isn't present until Cataclysm when modern specs were added.
 	KittyCoreFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 end
 
