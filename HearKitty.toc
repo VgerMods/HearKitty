@@ -4,6 +4,20 @@
 ## Notes: Hear Kitty plays sounds when you gain and spend combo points.
 ## SavedVariablesPerCharacter: KittyOptions
 
+## Group: HearKitty
+## IconTexture: Interface\AddOns\HearKitty\Textures\HearKittyIcon.tga
+## Category: Combat
+## Category-deDE: Kampf
+## Category-esES: Combate
+## Category-esMX: Combate
+## Category-frFR: Combat
+## Category-itIT: Combattimento
+## Category-koKR: 전투
+## Category-ptBR: Combate
+## Category-ruRU: Бой
+## Category-zhCN: 战斗
+## Category-zhTW: 戰鬥
+
 ## X-Wago-ID: vEGPeON1
 
 VgerCore\VgerCore.lua
