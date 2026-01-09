@@ -5,8 +5,6 @@
 ------------------------------------------------------------
 
 
-if GetLocale() == "esES" or GetLocale() == "esMX" then
-
 KittyLocal =
 {
 	DefaultSoundPackName = "Marcato", -- Needs review
@@ -40,5 +38,3 @@ www.vgermods.com
 		OptionsUseEffectsChannelTooltip = "Habilitar esta opción para permitir el control deslizante de volumen de sonido y efectos de sonido puede también afectar los sonidos Hear Kitty.", -- Needs review
 	},
 }
-
-end

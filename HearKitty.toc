@@ -22,12 +22,12 @@
 
 VgerCore\VgerCore.lua
 
-Localization.lua
-Localization.deDE.lua
-Localization.es.lua
-Localization.frFR.lua
-Localization.ptBR.lua
-Localization.ruRU.lua
+Localization.lua [AllowLoadTextLocale enUS, itIT, koKR, zhCN, zhTW]
+Localization.deDE.lua [AllowLoadTextLocale deDE]
+Localization.es.lua [AllowLoadTextLocale esES, esMX]
+Localization.frFR.lua [AllowLoadTextLocale frFR]
+Localization.ptBR.lua [AllowLoadTextLocale ptBR]
+Localization.ruRU.lua [AllowLoadTextLocale ruRU]
 UIStrings.lua
 HearKitty.lua
 HearKittyOptions.lua

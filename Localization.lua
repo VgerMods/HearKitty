@@ -5,9 +5,6 @@
 ------------------------------------------------------------
 
 
-local Locale = GetLocale()
-if Locale ~= "ptBR" and Locale ~= "frFR" and Locale ~= "deDE" and Locale ~= "esES" and Locale ~= "esMX" and Locale ~= "ruRU" then
-
 KittyLocal =
 {
 	DefaultSoundPackName = "Marcato",
@@ -61,5 +58,3 @@ Shortcuts:
 |cffffffffOn:|r Both the Master and Sounds volume settings affect Hear Kitty sounds.  This will make the sounds quieter if the Sound volume slider is lower than 100%.  If in-game sound effects are muted, Hear Kitty sounds will be muted too.]=],
 	},
 }
-
-end
