@@ -103,9 +103,9 @@ function KittyOnEvent(self, Event, arg1, arg2)
 		elseif arg2 == "SOUL_SHARDS" then
 			KittyOnSoulShardsChange()
 		elseif arg2 == "INSANITY" then
-				KittyOnInsanityChange()
+			KittyOnInsanityChange()
 		elseif arg2 == "LUNAR_POWER" then
-				KittyOnAstralPowerChange()
+			KittyOnAstralPowerChange()
 		elseif arg2 == "ARCANE_CHARGES" then
 			KittyOnArcaneChargesChange()
 		elseif arg2 == "ESSENCE" then
@@ -355,6 +355,8 @@ end
 
 function KittyOnMaelstromChange()
 	local Maelstrom = UnitPower("player", Enum.PowerType.Maelstrom)
+	if issecretvalue and issecretvalue(Maelstrom) then return end
+
 	if GetSpecialization and GetSpecialization() == 1 then
 		-- Elemental
 		if Maelstrom >= 60 then -- Earth Shock and Earthquake available
