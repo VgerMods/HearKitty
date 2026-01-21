@@ -108,6 +108,8 @@ Another one of Vger's mods, "Gyro: Get Your Raid On!", lets you set up macros th
 
 ## Release history
 
+### Version 1.12.2
+
 ### Version 1.12.1
 
 * The War Within and Midnight: Fixed an error that occurred when playing as an elemental shaman due to the game blocking addons from knowing how much maelstrom you have.

@@ -6,7 +6,7 @@
 -- Main non-UI code
 ------------------------------------------------------------
 
-HearKittyVersion = 1.1201
+HearKittyVersion = 1.1202
 
 -- Hear Kitty requires this version of VgerCore:
 local KittyVgerCoreVersionRequired = 1.21
