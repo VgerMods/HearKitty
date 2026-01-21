@@ -116,7 +116,7 @@ Another one of Vger's mods, "Gyro: Get Your Raid On!", lets you set up macros th
 
 ### Version 1.12.0
 
-* Midnight: **Hear Kitty now works on Midnight and the 12.0 pre-patch.** Midnight no longer allows addons to know about the state of your buffs and debuffs during combat, so some specs that Hear Kitty supported in earlier versions of the game such as frost mages with the Glacial Spike talent will no longer work in Midnight.
+* Midnight: Hear Kitty now works on Midnight and the 12.0 pre-patch. Midnight no longer allows addons to know about the state of your buffs and debuffs during combat, so some specs that Hear Kitty supported in earlier versions of the game such as frost mages with the Glacial Spike talent will no longer work in Midnight.
 
 ### Version 1.11.5
 
