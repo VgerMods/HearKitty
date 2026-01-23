@@ -108,6 +108,8 @@ Another one of Vger's mods, "Gyro: Get Your Raid On!", lets you set up macros th
 
 ## Release history
 
+### Version 1.12.3
+
 ### Version 1.12.2
 
 * The War Within and Midnight: Hear Kitty no longer supports balance druids, shadow priests, or elemental shamans due to the new Midnight restrictions on addons providing combat help.
