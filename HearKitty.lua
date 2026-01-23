@@ -385,6 +385,7 @@ end
 function KittyOnInsanityChange()
 	-- If the player is in Voidform, only play tones for when Insanity reaches 0.  Otherwise, it's spammy and annoying.
 	local Insanity = UnitPower("player", Enum.PowerType.Insanity)
+	if issecretvalue and issecretvalue(Insanity) then return end
 	if Insanity > 0 and KittyAuraStacks("player", "PLAYER HELPFUL", 194249) ~= nil then return end
 
 	if Insanity >= 100 then
@@ -411,6 +412,7 @@ end
 
 function KittyOnAstralPowerChange()
 	local AstralPower = UnitPower("player", Enum.PowerType.AstralPower)
+	if issecretvalue and issecretvalue(AstralPower) then return end
 
 	-- Druids do not need Astral Power change sounds unless in Balance spec. Astral power updates started firing in 11.0 for non-balance specs when using the Elune's Chosen hero class or the Convoke the Spirits talent.
 	-- Also, ignore astral power changes when in cat form in any spec, since we can only track one resource at a time.

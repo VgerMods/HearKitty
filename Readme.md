@@ -5,7 +5,7 @@ Hear Kitty plays soothing and distinct orchestral sounds as you gain and spend y
 These classes and specs work with Hear Kitty:
 
 * Unholy death knights: Shadow Infusion (Classic)
-* Balance druids: astral power
+* Balance druids: astral power (Classic)
 * Feral druids: combo points
 * Evokers: essence
 * Marksmanship hunters: Ready, Set, Aim, and Fire! (Classic)
@@ -15,7 +15,7 @@ These classes and specs work with Hear Kitty:
 * Monks: chi and Teachings of the Monastery (Classic)
 * Paladins: holy power
 * Discipline priests: evangelism (Classic)
-* Shadow priests: insanity and shadow orbs (Classic)
+* Shadow priests: insanity (Classic) and shadow orbs (Classic)
 * Rogues: combo points
 * Elemental and Enhancement shamans: maelstrom (Classic) and Rolling Thunder (Classic)
 * Warlocks: soul shards
@@ -110,9 +110,10 @@ Another one of Vger's mods, "Gyro: Get Your Raid On!", lets you set up macros th
 
 ### Version 1.12.2
 
+* The War Within and Midnight: Hear Kitty no longer supports balance druids, shadow priests, or elemental shamans due to the new Midnight restrictions on addons providing combat help.
+
 ### Version 1.12.1
 
-* The War Within and Midnight: Fixed an error that occurred when playing as an elemental shaman due to the game blocking addons from knowing how much maelstrom you have.
 * Slightly improved addon loading time.
 * Hear Kitty will look a little nicer in your addons list now.
 
