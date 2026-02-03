@@ -88,7 +88,7 @@ function KittyOnEvent(self, Event, arg1, arg2)
 		if Class == "DEATHKNIGHT" then PetHasInterestingBuffs = true end
 	end
 
-	if Event == "UNIT_POWER_UPDATE" and (arg1 == "player" or arg1 == "vehicle") and arg2 == "COMBO_POINTS" then
+	if Event == "UNIT_POWER_UPDATE" and (arg1 == "player") and arg2 == "COMBO_POINTS" then
 		KittyOnComboPointsChange(arg1)
 	elseif Event == "UNIT_POWER_UPDATE" and arg1 == "player" then
 		if arg2 == "MANA" then
@@ -460,18 +460,11 @@ function KittyOnAstralPowerChange()
 end
 
 function KittyOnComboPointsChange(Unit)
-	local ComboPoints
-
 	-- Ignore combo point changes for druids not in cat form, such as when combo points decay after leaving cat form, or when the Convoke the Spirits uses cat form abilities in other forms.
 	local _, Class = UnitClass("player")
 	if Class == "DRUID" and GetShapeshiftFormID() ~= 1 then return end
 
-	if GetComboPoints and Unit == "vehicle" then
-		-- WoW 7.0 has a bug where vehicle combo points raise the UNIT_POWER event, but can only be retrieved with the legacy GetComboPoints.
-		ComboPoints = GetComboPoints(Unit)
-	else
-		ComboPoints = UnitPower(Unit, Enum.PowerType.ComboPoints)
-	end
+	local ComboPoints = UnitPower(Unit, Enum.PowerType.ComboPoints)
 	if KittyDebug then VgerCore.Message("KITTYONCOMBOPOINTSCHANGE with Previous: " .. KittyLastComboPoints .. ", now: " .. ComboPoints .. ", last sound: " .. KittyLastSoundPlayed) end
 	if (ComboPoints ~= KittyLastComboPoints) then
 		-- (No-op if the number actually hasn't changed.)

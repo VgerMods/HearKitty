@@ -19,7 +19,6 @@ These classes and specs work with Hear Kitty:
 * Rogues: combo points
 * Elemental and Enhancement shamans: maelstrom (Classic) and Rolling Thunder (Classic)
 * Warlocks: soul shards
-* Vehicles with combo points (such as the drakes in Eye of Eternity)
 
 ## Installing
 
@@ -109,6 +108,8 @@ Another one of Vger's mods, "Gyro: Get Your Raid On!", lets you set up macros th
 ## Release history
 
 ### Version 1.12.3
+
+* Removed the code that used to support vehicles with combo points in Wrath of the Lich King (such as the drakes in Eye of Eternity) in earlier versions of WoW.
 
 ### Version 1.12.2
 
