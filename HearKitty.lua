@@ -6,7 +6,7 @@
 -- Main non-UI code
 ------------------------------------------------------------
 
-HearKittyVersion = 1.1203
+HearKittyVersion = 1.1204
 
 -- Hear Kitty requires this version of VgerCore:
 local KittyVgerCoreVersionRequired = 1.21
@@ -805,13 +805,13 @@ end
 --        0: The buff is present, but doesn't stack.
 --        1+: The buff is present, and has this many stacks. 
 function KittyAuraStacks(Unit, Filters, SpellID)
-	-- Starting in Midnight, we no longer have access to buff information during combat.
-	if VgerCore.IsMidnight then return nil end
-
+	-- In Midnight, aura spell IDs become secret values during combat and cannot be compared.
+	-- We check each entry individually so that out-of-combat reads still work correctly.
 	local i
 	for i = 1, BUFF_MAX_DISPLAY do
 		local AuraData = C_UnitAuras.GetAuraDataByIndex(Unit, i, Filters)
 		if not AuraData then break end -- We ran out of buffs
+		if issecretvalue and issecretvalue(AuraData.spellId) then return nil end -- Secret values in effect; can't compare
 		if AuraData.spellId == SpellID then return AuraData.applications end
 		--VgerCore.Message(Unit .. " #" .. i .. ": " .. AuraData.name .. " " .. tostring(AuraData.spellId) .. " x " .. tostring(AuraData.applications))
 	end
