@@ -6,7 +6,7 @@
 -- Main non-UI code
 ------------------------------------------------------------
 
-HearKittyVersion = 1.1204
+HearKittyVersion = 1.1205
 
 -- Hear Kitty requires this version of VgerCore:
 local KittyVgerCoreVersionRequired = 1.21
@@ -27,6 +27,13 @@ local KittyRequeuesOnTimer = 0
 local KittyIsInArenaPreparation = false
 local KittyIsFirstBuffChange = true
 local KittyLastComboPoints = 0 -- not to be confused with KittyLastSoundPlayed
+
+-- Mistweaver Monk: synthetic Teachings of the Monastery stack counter for Midnight in-combat tracking.
+-- nil = not tracking (out of combat, non-Midnight, or non-Mistweaver).  0+ = current stack count.
+local KittyTeachingsCount = nil
+local KittyTeachingsTimerSeq = 0
+-- Cached result of whether Way of the Crane (388779) is purchased in the current talent config.
+local KittyWayOfTheCrane = false
 
 -- Sound packs (the default sound pack is actually registered later in the file)
 local KittySoundPacks = { }
@@ -81,7 +88,7 @@ local KittyDefaultSoundPack =
 ------------------------------------------------------------
 
 -- Called when an event that Hear Kitty cares about is fired.
-function KittyOnEvent(self, Event, arg1, arg2)
+function KittyOnEvent(self, Event, arg1, arg2, arg3)
 	local PetHasInterestingBuffs
 	if VgerCore.IsCataclysm then
 		local _, Class = UnitClass("player")
@@ -115,6 +122,12 @@ function KittyOnEvent(self, Event, arg1, arg2)
 		KittyOnBuffsChange()
 	elseif Event == "PLAYER_SPECIALIZATION_CHANGED" then
 		KittyOnSpecChange()
+	elseif Event == "PLAYER_REGEN_DISABLED" then
+		KittyOnEnterCombat()
+	elseif Event == "PLAYER_REGEN_ENABLED" then
+		KittyOnLeaveCombat()
+	elseif Event == "UNIT_SPELLCAST_SUCCEEDED" and arg1 == "player" then
+		KittyOnSpellCastSucceeded(arg3)
 	elseif Event == "VARIABLES_LOADED" then
 		KittyInitialize()
 	end
@@ -143,6 +156,112 @@ end
 function KittyOnSpecChange()
 	KittyLastSoundPlayed = 0
 	KittyStopTimer()
+	KittyTeachingsCount = nil
+	KittyTeachingsTimerSeq = 0
+	if VgerCore.IsMidnight then
+		local _, Class = UnitClass("player")
+		if Class == "MONK" and GetSpecialization and GetSpecialization() == 2 then
+			KittyWayOfTheCrane = KittyCheckWayOfTheCrane()
+		else
+			KittyWayOfTheCrane = false
+		end
+	end
+end
+
+-- Returns true if the Way of the Crane talent (388779) is purchased in the player's active talent config.
+-- Uses C_Traits tree traversal because IsSpellKnown/IsPlayerSpell are unreliable for this passive.
+-- For choice nodes, also verifies that the 388779 entry is the committed choice, not the alternative.
+function KittyCheckWayOfTheCrane()
+	if not (C_ClassTalents and C_ClassTalents.GetActiveConfigID and C_Traits) then return false end
+	local configID = C_ClassTalents.GetActiveConfigID()
+	if not configID then return false end
+	local configInfo = C_Traits.GetConfigInfo and C_Traits.GetConfigInfo(configID)
+	local treeIDs = configInfo and configInfo.treeIDs
+	if not treeIDs then return false end
+	for _, treeID in ipairs(treeIDs) do
+		local nodes = C_Traits.GetTreeNodes and C_Traits.GetTreeNodes(treeID)
+		if nodes then
+			for _, nodeID in ipairs(nodes) do
+				local nodeInfo = C_Traits.GetNodeInfo and C_Traits.GetNodeInfo(configID, nodeID)
+				if nodeInfo and nodeInfo.currentRank and nodeInfo.currentRank > 0 and nodeInfo.entryIDs then
+					for _, entryID in ipairs(nodeInfo.entryIDs) do
+						local entryInfo = C_Traits.GetEntryInfo and C_Traits.GetEntryInfo(configID, entryID)
+						if entryInfo and entryInfo.definitionID then
+							local defInfo = C_Traits.GetDefinitionInfo and C_Traits.GetDefinitionInfo(entryInfo.definitionID)
+							if defInfo and defInfo.spellID == 388779 then
+								-- Choice node: verify this specific entry is the committed choice.
+								if nodeInfo.entryIDsWithCommittedRanks then
+									for _, committedID in ipairs(nodeInfo.entryIDsWithCommittedRanks) do
+										if committedID == entryID then return true end
+									end
+									return false
+								end
+								-- No choice tracking available; node rank > 0 is sufficient.
+								return true
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+	return false
+end
+
+-- Called when the player enters combat.  Starts synthetic Teachings tracking on Midnight for Mistweaver Monks.
+function KittyOnEnterCombat()
+	if not VgerCore.IsMidnight then return end
+	local _, Class = UnitClass("player")
+	if Class ~= "MONK" then return end
+	if not GetSpecialization or GetSpecialization() ~= 2 then return end
+	-- Refresh Way of the Crane detection in case talents changed since last spec switch.
+	KittyWayOfTheCrane = KittyCheckWayOfTheCrane()
+	local Stacks = KittyAuraStacks("player", "PLAYER HELPFUL", 202090)
+	KittyTeachingsCount = Stacks or 0
+	KittyTeachingsTimerSeq = 0
+end
+
+-- Called when the player leaves combat.  Stops synthetic Teachings tracking.
+function KittyOnLeaveCombat()
+	KittyTeachingsCount = nil
+	KittyTeachingsTimerSeq = 0
+end
+
+-- Dispatches UNIT_SPELLCAST_SUCCEEDED to spec-specific handlers.
+function KittyOnSpellCastSucceeded(SpellID)
+	KittyOnTeachingsSpellCastSucceeded(SpellID)
+end
+
+-- Tracks Teachings of the Monastery stacks during Midnight in-combat via spell cast events,
+-- since C_UnitAuras returns secret values for spell IDs and applications during combat.
+function KittyOnTeachingsSpellCastSucceeded(SpellID)
+	if KittyTeachingsCount == nil then return end
+
+	if SpellID == 100780 then -- Tiger Palm
+		local Stacks = KittyWayOfTheCrane and 2 or 1
+		KittyTeachingsCount = math.min(KittyTeachingsCount + Stacks, 4)
+		KittyThisResourceDecays = false
+		KittyCurrentMaxStacks = 4
+		KittyComboSound(KittyTeachingsCount)
+
+		-- Reset 20-second expiry timer.
+		KittyTeachingsTimerSeq = KittyTeachingsTimerSeq + 1
+		local ThisSeq = KittyTeachingsTimerSeq
+		C_Timer.After(20, function()
+			if KittyTeachingsTimerSeq ~= ThisSeq then return end
+			KittyTeachingsCount = 0
+			KittyThisResourceDecays = false
+			KittyCurrentMaxStacks = 4
+			KittyComboSound(0)
+		end)
+
+	elseif SpellID == 100784 then -- Blackout Kick
+		KittyTeachingsTimerSeq = KittyTeachingsTimerSeq + 1
+		KittyTeachingsCount = 0
+		KittyThisResourceDecays = false
+		KittyCurrentMaxStacks = 4
+		KittyComboSound(0)
+	end
 end
 
 -- Called whenever the player's buffs change.
@@ -244,7 +363,13 @@ function KittyOnBuffsChange()
 
 	-- Mistweaver Monk: Teachings of the Monastery
 	if BuffCharges == nil and Class == "MONK" and Spec == 2 then
-		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 202090)
+		if VgerCore.IsMidnight and KittyTeachingsCount ~= nil then
+			-- During Midnight combat, C_UnitAuras returns secret values; use the synthetic counter
+			-- maintained by KittyOnTeachingsCombatLogEvent instead.
+			BuffCharges = KittyTeachingsCount
+		else
+			BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 202090)
+		end
 		if BuffCharges then
 			KittyThisResourceDecays = false
 			-- Prior to 11.0 / The War Within this was 3 stacks.
@@ -894,6 +1019,9 @@ KittyCoreFrame:SetScript("OnEvent", KittyOnEvent)
 KittyCoreFrame:RegisterEvent("VARIABLES_LOADED")
 KittyCoreFrame:RegisterEvent("UNIT_AURA")
 KittyCoreFrame:RegisterEvent("UNIT_POWER_UPDATE")
+KittyCoreFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+KittyCoreFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+KittyCoreFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 if VgerCore.SpecsExist then
 	KittyCoreFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 end
