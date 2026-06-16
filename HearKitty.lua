@@ -472,7 +472,7 @@ function KittyOnComboPointsChange(Unit)
 		VgerCore.Assert(KittyCurrentMaxStacks ~= nil and KittyCurrentMaxStacks > 0, "Hear Kitty: UnitPowerMax for combo points failed")
 		KittyThisResourceDecays = true
 		if KittyCurrentMaxStacks == 10 then
-			 -- Rogue talent Anticipation allows up to 5 (was 3 before 7.1.5) spare combo points but only 5 at a time; Deeper Strategem allows 6 full combo points.
+			 -- Rogue talent Anticipation allows up to 5 (was 3 before 7.1.5) spare combo points but only 5 at a time; Secret/Deeper Strategem allows 6 full combo points.
 			KittyCurrentMaxStacks = 5
 			if KittyLastComboPoints > 5 and ComboPoints == KittyLastComboPoints - 5 then
 				-- They previously had some Anticipation charges stored up, and they just got converted to combo points.  Play the zero sound.
