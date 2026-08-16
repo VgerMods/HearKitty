@@ -646,6 +646,31 @@ function KittyOnComboPointsChange(Unit)
         KittyLastComboPoints = ComboPoints
         KittyComboSound(ComboPoints)
     end
+	-- Ignore combo point changes for druids not in cat form, such as when combo points decay after leaving cat form, or when the Convoke the Spirits uses cat form abilities in other forms.
+	local _, Class = UnitClass("player")
+	if Class == "DRUID" and GetShapeshiftFormID() ~= 1 then return end
+
+	local ComboPoints = UnitPower(Unit, Enum.PowerType.ComboPoints)
+	if KittyDebug then VgerCore.Message("KITTYONCOMBOPOINTSCHANGE with Previous: " .. KittyLastComboPoints .. ", now: " .. ComboPoints .. ", last sound: " .. KittyLastSoundPlayed) end
+	if (ComboPoints ~= KittyLastComboPoints) then
+		-- (No-op if the number actually hasn't changed.)
+		KittyCurrentMaxStacks = UnitPowerMax(Unit, Enum.PowerType.ComboPoints)
+		VgerCore.Assert(KittyCurrentMaxStacks ~= nil and KittyCurrentMaxStacks > 0, "Hear Kitty: UnitPowerMax for combo points failed")
+		KittyThisResourceDecays = true
+		if KittyCurrentMaxStacks == 10 then
+			 -- Rogue talent Anticipation allows up to 5 (was 3 before 7.1.5) spare combo points but only 5 at a time; Secret/Deeper Strategem allows 6 full combo points.
+			KittyCurrentMaxStacks = 5
+			if KittyLastComboPoints > 5 and ComboPoints == KittyLastComboPoints - 5 then
+				-- They previously had some Anticipation charges stored up, and they just got converted to combo points.  Play the zero sound.
+				if KittyDebug then VgerCore.Message("Combo points just converted to Anticipation charges") end
+				 -- Override these so we'll start from 0 and then play up to the current total
+				KittyThisResourceDecays = false
+				KittyLastSoundPlayed = 10
+			end
+		end
+		KittyLastComboPoints = ComboPoints
+		KittyComboSound(ComboPoints)
+	end
 end
 
 function KittyOnEssenceChange()
