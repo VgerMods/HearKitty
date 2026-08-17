@@ -806,7 +806,7 @@ end
 --        1+: The buff is present, and has this many stacks. 
 function KittyAuraStacks(Unit, Filters, SpellID)
 	-- Starting in Midnight, we no longer have access to buff information during combat.
-	if VgerCore.IsMidnight then return nil end
+	if VgerCore.IsMidnightOrLater then return nil end
 
 	local i
 	for i = 1, BUFF_MAX_DISPLAY do
