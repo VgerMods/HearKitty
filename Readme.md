@@ -110,6 +110,7 @@ Another one of Vger's mods, "Gyro: Get Your Raid On!", lets you set up macros th
 ### Version 1.12.3
 
 * Removed the code that used to support vehicles with combo points in Wrath of the Lich King (such as the drakes in Eye of Eternity) in earlier versions of WoW.
+* Midnight: Restored Teachings of the Monastery tracking for Mistweaver monks. Midnight hides buff information from addons during combat, so Hear Kitty now counts Teachings of the Monastery stacks by watching for Tiger Palm and Blackout Kick casts instead. Tones play correctly for both the Way of the Serpent (one stack per Tiger Palm) and Way of the Crane (two stacks per Tiger Palm) talents.
 
 ### Version 1.12.2
 

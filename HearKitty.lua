@@ -28,6 +28,14 @@ local KittyIsInArenaPreparation = false
 local KittyIsFirstBuffChange = true
 local KittyLastComboPoints = 0 -- not to be confused with KittyLastSoundPlayed
 
+-- Mistweaver Monk: synthetic Teachings of the Monastery stack counter for Midnight.
+-- In Midnight combat, buff spell IDs and stack counts are secret values, so stacks are
+-- counted from spell casts instead of reading the buff.  nil = not tracking (out of
+-- combat, other classes, or pre-Midnight clients).  0+ = current stack count.
+local KittyTeachingsCount = nil
+local KittyTeachingsTimer = nil -- Pending C_Timer for the buff's 20-second expiry.
+local KittyWayOfTheCrane = false -- True when the Way of the Crane talent (Tiger Palm grants 2 stacks) is selected.
+
 -- Sound packs (the default sound pack is actually registered later in the file)
 local KittySoundPacks = { }
 KittyDefaultSoundPackInternalName = "Default"
@@ -81,7 +89,7 @@ local KittyDefaultSoundPack =
 ------------------------------------------------------------
 
 -- Called when an event that Hear Kitty cares about is fired.
-function KittyOnEvent(self, Event, arg1, arg2)
+function KittyOnEvent(self, Event, arg1, arg2, arg3)
 	local PetHasInterestingBuffs
 	if VgerCore.IsCataclysm then
 		local _, Class = UnitClass("player")
@@ -115,6 +123,12 @@ function KittyOnEvent(self, Event, arg1, arg2)
 		KittyOnBuffsChange()
 	elseif Event == "PLAYER_SPECIALIZATION_CHANGED" then
 		KittyOnSpecChange()
+	elseif Event == "PLAYER_REGEN_DISABLED" then
+		KittyOnEnterCombat()
+	elseif Event == "PLAYER_REGEN_ENABLED" then
+		KittyOnLeaveCombat()
+	elseif Event == "UNIT_SPELLCAST_SUCCEEDED" and (arg1 == "player") then
+		KittyOnSpellCastSucceeded(arg3)
 	elseif Event == "VARIABLES_LOADED" then
 		KittyInitialize()
 	end
@@ -143,6 +157,131 @@ end
 function KittyOnSpecChange()
 	KittyLastSoundPlayed = 0
 	KittyStopTimer()
+	KittyOnLeaveCombat() -- Also disarms synthetic Teachings tracking and cancels its expiry timer.
+	KittyWayOfTheCrane = false
+	if VgerCore.IsMidnightOrLater and GetSpecialization and GetSpecialization() == 2 then
+		local _, Class = UnitClass("player")
+		if Class == "MONK" then
+			KittyWayOfTheCrane = KittyCheckWayOfTheCrane()
+		end
+	end
+end
+
+------------------------------------------------------------
+-- Midnight combat tracking (Mistweaver Monk)
+------------------------------------------------------------
+
+-- On Midnight, buff spell IDs and stack counts are secret values while the player is in
+-- combat, so stacks of Teachings of the Monastery (202090) can't be read.  Instead, stacks
+-- are counted synthetically from the spells that grant and consume them: Tiger Palm
+-- (100780) grants a stack (or two with Way of the Crane selected), Blackout Kick (100784)
+-- consumes them all, and the buff expires 20 seconds after the last stack is granted.
+-- The counter is only armed while in combat; out of combat the buff is readable as normal.
+
+-- Returns true if the Way of the Crane talent (spell 388779) is the committed choice in the
+-- player's active talent configuration.  Traverses the class talent tree with C_Traits
+-- because IsSpellKnown/IsPlayerSpell are unreliable for this passive (both report it as
+-- present for every Monk loadout).  entryIDsWithCommittedRanks lists the entries the player
+-- actually committed ranks to, so a choice node where the other way was picked returns false.
+function KittyCheckWayOfTheCrane()
+	if not (C_ClassTalents and C_ClassTalents.GetActiveConfigID and C_Traits) then return false end
+	local ConfigID = C_ClassTalents.GetActiveConfigID()
+	if not ConfigID then return false end
+	local ConfigInfo = C_Traits.GetConfigInfo(ConfigID)
+	if not ConfigInfo or not ConfigInfo.treeIDs then return false end
+
+	for _, TreeID in ipairs(ConfigInfo.treeIDs) do
+		local Nodes = C_Traits.GetTreeNodes(TreeID)
+		if Nodes then
+			for _, NodeID in ipairs(Nodes) do
+				local NodeInfo = C_Traits.GetNodeInfo(ConfigID, NodeID)
+				if NodeInfo and NodeInfo.entryIDsWithCommittedRanks then
+					for _, EntryID in ipairs(NodeInfo.entryIDsWithCommittedRanks) do
+						local EntryInfo = C_Traits.GetEntryInfo(ConfigID, EntryID)
+						if EntryInfo and EntryInfo.definitionID then
+							local DefInfo = C_Traits.GetDefinitionInfo(EntryInfo.definitionID)
+							if DefInfo and DefInfo.spellID == 388779 then return true end
+						end
+					end
+				end
+			end
+		end
+	end
+	return false
+end
+
+-- Called when the player enters combat.  Arms synthetic Teachings tracking for Mistweaver
+-- Monks on Midnight, seeding the counter with whatever stacks are readable at that moment.
+-- (If the data is already secret when this fires, we seed 0; the counter may then be a beat
+-- behind until combat ends and the real buff is readable again.)
+function KittyOnEnterCombat()
+	if not VgerCore.IsMidnightOrLater then return end
+	local _, Class = UnitClass("player")
+	if Class ~= "MONK" or not GetSpecialization or GetSpecialization() ~= 2 then return end
+
+	-- Refresh Way of the Crane detection in case talents changed since we last checked.
+	KittyWayOfTheCrane = KittyCheckWayOfTheCrane()
+
+	-- Seed the counter with whatever stacks are readable at this moment.
+	local Stacks = KittyAuraStacks("player", "PLAYER HELPFUL", 202090)
+	KittyTeachingsCount = Stacks or 0
+
+	-- If the buff was readable, schedule the expiry timer for its actual remaining duration
+	-- instead of assuming a fresh 20 seconds.
+	if Stacks and Stacks > 0 then
+		local AuraData = C_UnitAuras.GetPlayerAuraBySpellID and C_UnitAuras.GetPlayerAuraBySpellID(202090)
+		local Remaining = AuraData and (AuraData.expirationTime - GetTime()) or 20
+		if Remaining < 0 then Remaining = 0 elseif Remaining > 20 then Remaining = 20 end
+		KittyArmTeachingsTimer(Remaining)
+	end
+end
+
+-- Called when the player leaves combat.  Disarms synthetic Teachings tracking and cancels
+-- any pending expiry timer, since the buff is readable again out of combat.
+function KittyOnLeaveCombat()
+	KittyTeachingsCount = nil
+	if KittyTeachingsTimer then
+		KittyTeachingsTimer:Cancel()
+		KittyTeachingsTimer = nil
+	end
+end
+
+-- (Re)schedules the Teachings expiry timer.  Any pending timer is replaced, and a timer
+-- that fires after tracking was disarmed (combat ended) does nothing.
+function KittyArmTeachingsTimer(Duration)
+	if KittyTeachingsTimer then KittyTeachingsTimer:Cancel() end
+	KittyTeachingsTimer = C_Timer.NewTimer(Duration, function()
+		KittyTeachingsTimer = nil
+		if KittyTeachingsCount == nil then return end -- Tracking was disarmed (combat ended) without cancelling us.
+		KittyTeachingsCount = 0
+		KittyOnBuffsChange()
+	end)
+end
+
+-- Called when the player finishes casting a spell.  Updates the synthetic Teachings of the
+-- Monastery counter, then runs a buff scan so the existing sound pipeline plays the result.
+-- This only mutates state; all sound policy (double crits, sound queueing, "only play 5",
+-- etc.) lives in KittyOnBuffsChange.  Does nothing when tracking isn't armed (other
+-- classes, out of combat, or pre-Midnight clients), since normal buff reads cover those.
+function KittyOnSpellCastSucceeded(SpellID)
+	if KittyTeachingsCount == nil then return end
+
+	if SpellID == 100780 then -- Tiger Palm grants a stack, or two with Way of the Crane.
+		KittyTeachingsCount = math.min(KittyTeachingsCount + (KittyWayOfTheCrane and 2 or 1), 4)
+		KittyArmTeachingsTimer(20) -- The buff expires 20 seconds after the last stack was granted.
+	elseif SpellID == 100784 then -- Blackout Kick consumes all stacks.
+		if KittyTeachingsTimer then
+			KittyTeachingsTimer:Cancel()
+			KittyTeachingsTimer = nil
+		end
+		KittyTeachingsCount = 0
+	else
+		return -- Not a spell we're tracking.
+	end
+
+	-- Cast events arrive before the aura data changes, so run the buff scan ourselves
+	-- rather than waiting for UNIT_AURA; when that event arrives it will be a no-op.
+	KittyOnBuffsChange()
 end
 
 -- Called whenever the player's buffs change.
@@ -244,7 +383,13 @@ function KittyOnBuffsChange()
 
 	-- Mistweaver Monk: Teachings of the Monastery
 	if BuffCharges == nil and Class == "MONK" and Spec == 2 then
-		BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 202090)
+		if KittyTeachingsCount ~= nil then
+			-- On Midnight the aura is secret during combat; use the synthetic stack counter
+			-- maintained by KittyOnSpellCastSucceeded instead of reading the buff.
+			BuffCharges = KittyTeachingsCount
+		else
+			BuffCharges = KittyAuraStacks("player", "PLAYER HELPFUL", 202090)
+		end
 		if BuffCharges then
 			KittyThisResourceDecays = false
 			-- Prior to 11.0 / The War Within this was 3 stacks.
@@ -804,14 +949,29 @@ end
 --        nil: The buff isn't present.
 --        0: The buff is present, but doesn't stack.
 --        1+: The buff is present, and has this many stacks. 
+--    On Midnight, buff data is secret while in combat, so this returns nil then.
+--    (Mistweaver monks track Teachings of the Monastery synthetically instead.)
 function KittyAuraStacks(Unit, Filters, SpellID)
-	-- Starting in Midnight, we no longer have access to buff information during combat.
-	if VgerCore.IsMidnightOrLater then return nil end
+	-- Only Mistweaver Monks are currently handled on Midnight (their Teachings stacks are
+	-- tracked synthetically during combat - see the Midnight combat tracking section).
+	-- Other classes keep the previous behavior: no buff reads on Midnight, so they stay
+	-- quiet rather than bursting into tones the moment combat ends and data is readable.
+	if VgerCore.IsMidnightOrLater then
+		local _, Class = UnitClass("player")
+		if Class ~= "MONK" then return nil end
+	end
+
+	-- On Midnight, buff data is secret while in combat, and calling GetAuraDataByIndex then
+	-- throws an error instead of returning secret values, so don't attempt the read at all
+	-- during combat.  (Pre-Midnight clients can read auras in combat as always.)
+	if VgerCore.IsMidnightOrLater and InCombatLockdown() then return nil end
 
 	local i
 	for i = 1, BUFF_MAX_DISPLAY do
-		local AuraData = C_UnitAuras.GetAuraDataByIndex(Unit, i, Filters)
+		local Ok, AuraData = pcall(C_UnitAuras.GetAuraDataByIndex, Unit, i, Filters)
+		if not Ok then return nil end -- The auras are inaccessible right now (secret); stop reading until they're readable again.
 		if not AuraData then break end -- We ran out of buffs
+		if issecretvalue and issecretvalue(AuraData.spellId) then return nil end -- Secret during combat on Midnight; can't compare.
 		if AuraData.spellId == SpellID then return AuraData.applications end
 		--VgerCore.Message(Unit .. " #" .. i .. ": " .. AuraData.name .. " " .. tostring(AuraData.spellId) .. " x " .. tostring(AuraData.applications))
 	end
@@ -896,6 +1056,12 @@ KittyCoreFrame:RegisterEvent("UNIT_AURA")
 KittyCoreFrame:RegisterEvent("UNIT_POWER_UPDATE")
 if VgerCore.SpecsExist then
 	KittyCoreFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+end
+if VgerCore.IsMidnightOrLater then
+	-- Midnight only: synthetic Teachings of the Monastery tracking for Mistweaver Monks.
+	KittyCoreFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+	KittyCoreFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+	KittyCoreFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 end
 
 -- Register the default sound pack
