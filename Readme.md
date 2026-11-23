@@ -109,6 +109,7 @@ Another one of Vger's mods, "Gyro: Get Your Raid On!", lets you set up macros th
 
 ### Version 1.12.3
 
+* Forever: Fixed an error about tainted secrets that could occur periodically when playing on Forever.
 * Removed the code that used to support vehicles with combo points in Wrath of the Lich King (such as the drakes in Eye of Eternity) in earlier versions of WoW.
 
 ### Version 1.12.2

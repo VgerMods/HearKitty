@@ -2,8 +2,8 @@
 -- www.vgermods.com
 -- © 2006-2026 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- 
--- Version 1.0.23 -- IsForever
-local VgerCoreThisVersion = 1.23
+-- Version 1.0.25 -- SecretsExist
+local VgerCoreThisVersion = 1.25
 -- 
 -- VgerCore contains functionality that is shared by Vger's mods.
 -- It can be used as a standalone add-on, or embedded within other mods.
@@ -42,6 +42,7 @@ VgerCore.IsWarWithinOrLater = BuildNumber >= 110000
 VgerCore.IsMidnight = BuildNumber >= 120000 and BuildNumber < 130000
 VgerCore.IsMidnightOrLater = BuildNumber >= 120000
 
+VgerCore.SecretRestrictions = VgerCore.IsMidnightOrLater or VgerCore.IsForever
 VgerCore.DeathKnightsExist = VgerCore.IsWrath or VgerCore.IsCataclysm or VgerCore.IsMists or VgerCore.IsDraenorOrLater
 VgerCore.MonksExist = VgerCore.IsMists or VgerCore.IsDraenorOrLater
 VgerCore.DemonHuntersExist = VgerCore.IsLegionOrLater
@@ -393,6 +394,32 @@ function VgerCore.IndexOf(Table, Item)
 	for ThisIndex, ThisItem in pairs(Table) do
 		if ThisItem == Item then return ThisIndex end
 	end
+end
+
+-- Returns a shallow copy of a table (tables inside the table being copied will reuse references).
+-- Metatables are ignored.
+function VgerCore.ShallowCopy(Table)
+	if type(Table) ~= "table" then return Table end
+	local Copy = { }
+	for Key, Value in pairs(Table) do
+		Copy[Key] = Value
+	end
+	return Copy
+end
+
+local function DeepCopyCore(Table)
+	if type(Table) ~= "table" then return Table end
+	local Copy = { }
+	for Key, Value in pairs(Table) do
+		Copy[Key] = VgerCore.DeepCopy(Value)
+	end
+	return Copy
+end
+
+-- Recursively builds a deep copy of a table (tables inside the table being copied will also be copied).
+-- Will stack overflow on tables with circular references. Metatables are ignored.
+function VgerCore.DeepCopy(Table)
+	return DeepCopyCore(Table)
 end
 
 ------------------------------------------------------------
