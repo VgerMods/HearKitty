@@ -107,6 +107,8 @@ Another one of Vger's mods, "Gyro: Get Your Raid On!", lets you set up macros th
 
 ## Release history
 
+### Version 1.12.4
+
 ### Version 1.12.3
 
 * Forever: Fixed an error about tainted secrets that could occur periodically when playing on Forever.
